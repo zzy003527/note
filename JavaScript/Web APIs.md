@@ -1,4 +1,4 @@
-# Web APIs
+#  Web APIs
 
 ### 基本概念
 
@@ -14,85 +14,74 @@
   - 即：API是给程序员提供的一种工具，以便能更轻松的实现想完成的功能
   - **Web API是浏览器**提供的一套操作**浏览器功能**和**页面元素**的API(BOM和DOM)
 
-
-
-
-
-
-
 ### DOM
 
 - 什么是DOM
+
   - 文档对象模型（Document Object Model,简称**DOM**），是W3C组织推荐的处理可扩展标记语言（HTML或者XML）的**标准编程接口**
-  
+
 - DOM树
-  - ![QQ图片20211215121307](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211215121307.png)
+
+  - ![QQ图片20211215121307](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211215121307.png)
   - 文档：一个页面就是一个文档，DOM中使用document表示
   - 元素：页面中的所有标签都是元素，DOM中使用element表示
   - 节点：网页中的所有内容都是节点（标签、属性、文本、注释等），DOM中使用node表示
   - **DOM把以上内容都看作是对象**
-  
+
 - 如何获取页面元素
+
   - 根据ID获取
+
     - 使用getElementById（）方法可以获取带有ID 的元素
-    
-    - ```js
+
+    - ```
       <div id='time'>2019-9-9<div>
       var timer = document.getElementById('time');
       console.log(timer);
       ```
-    
+
     - 参数id是大小写敏感的字符串
-    
+
     - 返回的是一个元素对象
-    
-    - **<u>console.dir  打印我们返回的元素对象，更好的查看里面的属性和方法</u>**
-    
+
+    - **console.dir 打印我们返回的元素对象，更好的查看里面的属性和方法**
+
   - 根据标签名获取
 
     - 使用getElementsByTagName()方法可以返回带有指定标签名的**对象的集合**,以伪数组的形式存储
 
-    - ```js
+    - ```
       document.getElementsByTagName('标签名');
       ```
 
     - 还可以获取某个父元素内部所有指定标签名的子元素
 
-      ```js
+      ```
       element.getElementsByTagName('标签名')；
       
       var ol = document.getElementsById('ol');
       console.log(ol.getElementsByTagName('li'));
       ```
-  
+
       注意：父元素必须是单个对象（必须指名是哪一个元素对象，获取时不包括父元素自己）
-  
-      
-  
+
   - 通过HTML5新增的方法获取
-  
-    - document.getElementsByClassName('类名')；       //根据类名返回元素对象集合
-  
-    - document.querySelector('选择器')；        //根据指定选择器返回第一个元素对象
-  
-      - **切记里面的选择器需要加符号，  .box、#id**
-  
-    - document.querySelectorAll('选择器')；         //根据指定选择器返回
-  
-      
-  
+
+    - document.getElementsByClassName('类名')； //根据类名返回元素对象集合
+    - document.querySelector('选择器')； //根据指定选择器返回第一个元素对象
+      - **切记里面的选择器需要加符号， .box、#id**
+    - document.querySelectorAll('选择器')； //根据指定选择器返回
+
   - 获取特殊元素
-  
+
     - 获取body标签
-  
+
       document .body
-  
+
     - 获取html元素
-  
+
       document.documentElement
-  
-    
-  
+
 - 事件基础
 
   - JavaScript使我们有能力创建动态页面，而事件是可以被JavaScript侦测到的行为。简单理解为：触发——响应机制
@@ -124,8 +113,6 @@
     | onmouseup   | 鼠标弹起触发     |
     | onmousedown | 鼠标按下触发     |
 
-    
-
 - 操作元素
 
   - JavaScript的DOM操作可以改变网页内容、结构和样式，我们可以利用DOM操作元素来改变元素里面的内容、属性等。
@@ -148,16 +135,16 @@
 
       - 这两个属性是可读写的，可以获取元素里面的内容
 
-      - ```js
+      - ```
         var p = document.querySeletor('p');
         console.log(p.innerText);
         ```
 
   - 修改元素属性
 
-    - 1.获取元素  2.注册事件
+    - 1.获取元素 2.注册事件
 
-    - ```js
+    - ```
        <button id="yin">鄞灿</button>
           <button id="me">我</button>
           <img src="./zhu.jfif" alt="">
@@ -177,13 +164,11 @@
               }
       ```
 
-      
-
   - 表单元素的属性操作
 
     - 利用DOM可以操作以下表单元素属性：type、value、checked、selected、disabled
 
-    - ```js
+    - ```
         <button>按钮</button>
           <input type="text" value="输入内容">
           <script>
@@ -197,15 +182,13 @@
               }
       ```
 
-    - **<u>this指向事件函数的调用者</u>**
-
-        
+    - **this指向事件函数的调用者**
 
   - 样式属性操作
 
-    - element.style        行内样式操作
+    - element.style 行内样式操作
 
-      ```js
+      ```
        <div></div>
           <script>
               var div = document.querySelector('div');
@@ -216,13 +199,13 @@
       元素.style.属性
       ```
 
-      - 注意：1.JS里面的样式采用驼峰命名法，如：fontSize,  backgroundColor
+      - 注意：1.JS里面的样式采用驼峰命名法，如：fontSize, backgroundColor
 
-        ​            2.JS修改style样式操作，产生的是行内样式，**css权重比较高**
+         2.JS修改style样式操作，产生的是行内样式，**css权重比较高**
 
-    - element.className    类名样式操作
+    - element.className 类名样式操作
 
-      ```js
+      ```
       <style>
               div {
                   width: 100px;
@@ -250,19 +233,19 @@
 
       - 注意：1.如果样式修改较多，可以采取操作类名方式更改元素样式
 
-        ​            2.class因为是个保留字，因此使用className来操作元素类名属性
+         2.class因为是个保留字，因此使用className来操作元素类名属性
 
-        ​            3.**className会直接更改元素的类名，会覆盖原先的类名，若要保留，则写** 
+         3.**className会直接更改元素的类名，会覆盖原先的类名，若要保留，则写**
 
-        ​                                             **元素.className = '原先类名 更改后类名'**
+         **元素.className = '原先类名 更改后类名'**
 
   - 排他思想
 
     - 如果有同一组元素，我们想要某一个元素实现某种样式，需要用到循环的排他思想
 
-    - 步骤：1.所有元素全部清除样式（干掉其他人）   2.给当前元素设置样式（留下我自己）   3.注意顺序不能颠倒
+    - 步骤：1.所有元素全部清除样式（干掉其他人） 2.给当前元素设置样式（留下我自己） 3.注意顺序不能颠倒
 
-    - ```js
+    - ```
       var btns = document.getElementsByTagName('button');
               for(var i = 0; i < btns.length; i++)
               {
@@ -277,29 +260,27 @@
               }
       ```
 
-      
-
   - 自定义属性的操作
 
     - 获取属性**值**
 
-      - element.属性        获取属性值
+      - element.属性 获取属性值
 
       - element.getAttribute('属性')
 
       - 区别：element.属性：获取内置属性值（元素本身自带的属性）
 
-        ​            **element.getAttribute('属性')；       ：主要获得自定义的属性**
+         **element.getAttribute('属性')； ：主要获得自定义的属性**
 
     - 设置属性值
 
-      - element.属性 = ‘值’                   设置内置属性值
+      - element.属性 = ‘值’ 设置内置属性值
 
       - element.setAttribute(‘属性’，‘值’)；
 
       - 区别：element.属性 ：设置内置属性值
 
-        ​           element.setAttribute('属性')；              ：主要设置自定义的属性
+         element.setAttribute('属性')； ：主要设置自定义的属性
 
     - 移除属性
 
@@ -317,35 +298,40 @@
 
       - H5规定自定义属性data-开头做为属性名并且赋值
 
-        如：<div data-index = '1'></div>
+        如：
+
+        
 
         或者用JS设置：element.setAttribute('data-index',2)
 
     - 获取H5自定义属性
 
-      - 兼容性获取   element.getAttribute('data-index');
-
-      - H5新增element.dataset.index  或者 element.dataset['index']        （ie11才开始支持）
-
+      - 兼容性获取 element.getAttribute('data-index');
+      - H5新增element.dataset.index 或者 element.dataset['index'] （ie11才开始支持）
         - 如果自定义属性里面有多个-连接的单词，获取时采取驼峰命名法
         - 只能获取data-开头的
-
-        
 
 - 节点操作
 
   - 为什么学节点操作
+
     - 利用父子兄节点关系获取元素
     - 逻辑性强，但兼容性稍差
-    
+
   - 节点概述
+
     - 网页中所有内容都是节点（标签、属性、文本、注释等），在DOM中，节点用node来表示
+
     - HTML DOM树中的所有节点均可通过JavaScript进行访问，所有HTML元素（节点）均可被修改，也可以创建和删除
-    - 一般的，**节点至少拥有nodeType（节点类型）、nodeName（节点名称）和nodeValue（节点值）这三个基本属性**
+
+    - 一般的，
+
+      节点至少拥有nodeType（节点类型）、nodeName（节点名称）和nodeValue（节点值）这三个基本属性
+
       - **元素节点nodeType为1**
       - **属性节点nodeType为2**
       - **文本节点nodeType为3（文本节点包括文字、空格、换行等）**
-    
+
   - 节点层级
 
     - 利用DOM树可以把节点划分为不同的层级关系，常见的是父子兄层级关系
@@ -358,17 +344,14 @@
 
     - 子节点
 
-      - 1.parentNode.childNodes     (标准)
+      - 1.parentNode.childNodes (标准)
 
-        -  parentNode.childNodes返回包含指定节点的子节点的集合，该集合为即时更新的集合
+        - parentNode.childNodes返回包含指定节点的子节点的集合，该集合为即时更新的集合
+        - **注意：返回值里面的子节点包含文本节点、元素节点等**
+        - 如果只想要获得里面的元素节点，则需要专门处理
+        - 
 
-        -  **注意：返回值里面的子节点包含文本节点、元素节点等**
-
-        -  如果只想要获得里面的元素节点，则需要专门处理
-
-        -  
-
-        ```js
+        ```
         var ul = document.querySeletor('ul');
         for(var i = 0,i < ul.length;i++)
             {
@@ -379,11 +362,9 @@
             }
         ```
 
-        
+      - 2.**parentNode.children** (非标准)
 
-      - 2.**<u>parentNode.children</u>**   (非标准)
-
-        -  parentNode.children是一个只读属性，返回**所有的子元素节点**。它只返回子元素节点，其余节点不返回
+        - parentNode.children是一个只读属性，返回**所有的子元素节点**。它只返回子元素节点，其余节点不返回
 
       - 3.parentNode.firstChild
 
@@ -397,7 +378,7 @@
 
       - 6.parentNode.lastElementChild（ie9以上支持）
 
-        -  lastElementChild返回最后一个子元素节点，找不到则返回null
+        - lastElementChild返回最后一个子元素节点，找不到则返回null
 
     - 兄弟节点
 
@@ -419,7 +400,7 @@
 
       - 自己封装一个兼容性的函数：
 
-        ```js
+        ```
         function getNextElementSibling(element) {
         var el = element;
             while(el = el.nextSibling) {
@@ -435,16 +416,16 @@
 
       - document.createElement('tagName')
       - document.createElement()方法创建由tagName指定的HTML元素。因为这些元素原先不存在，是根据我们的需求动态生成的，所有我们也称为动态创建元素节点
-      
+
     - 添加节点
 
       - node.appendChild(child)
 
-        -  node.appendChild()方法将一个节点**添加到指定父节点的子节点列表末尾**。类似于css里面的after伪元素
+        - node.appendChild()方法将一个节点**添加到指定父节点的子节点列表末尾**。类似于css里面的after伪元素
 
-        -  node为父元素，child为子元素
+        - node为父元素，child为子元素
 
-        - ```js
+        - ```
           <ul></ul>
           <script>
                   //创建节点元素节点
@@ -456,10 +437,10 @@
           ```
 
       - node.insertBefore(child,指定元素)
-        
+
         - nodeinsertBefore()方法将一个节点添加到父节点的指定子节点**前面**。类似于css里面的before伪元素
-        
-        - ```js
+
+        - ```
           //添加节点node.insertBefore(child,指定元素)
                   var lili = document.createElement('li');
                   ul.insertBefore(lili,ul.children[0]);
@@ -471,7 +452,7 @@
 
         - node.removeChild()方法从DOM中删除一个子节点，返回删除的节点
 
-        - ```js
+        - ```
            <button>按钮</button>
               <ul>
                   <li>熊大</li>
@@ -495,30 +476,20 @@
 
       - node.cloneNode()
       - node.cloneNode()方法返回调用该方法的节点的一个副本。也成为克隆节点/拷贝节点
-      - **注意：**
+      - 注意：
         - 如果括号参数**为空或者为false**，则是**浅拷贝**，即只克隆复制节点本身，不克隆里面的子节点
         - 如果括号参数为**true**，则是**深度拷贝**，会复制节点本身以及里面所有的子节点。
-      
-    
+
   - 三种动态创建元素区别
 
     - document.write()
-
     - document.innerHTML
-
     - document.createElement()
-
     - 区别：
-
       - document.write()是直接将内容写入页面的内容流，**但是文档流执行完毕，则它会导致页面全部重绘**（重新创造一个只有write出来的元素的页面）
-
       - innerHTML是将内容写入某个DOM节点，不会导致页面全部重绘
-
       - innerHTML创建多个元素效率更高（不要拼接字符串，采取数组形式拼接），结构稍微复杂
-
       - createElement（）创建多个元素效率稍低一点点，但是结构更清晰
-
-        
 
 - DOM重点核心
 
@@ -526,10 +497,6 @@
   - W3C已经定义了一系列的DOM接口，通过这些DOM接口可以改变网页的内容、结构和样式
   - 对于JavaScript，为了能够使JavaScript操作HTML，JavaScript就有了一套自己的DOM编程接口
   - 对于HTML，DOM使得HTML形成一棵DOM树，包含文档、元素、节点
-
-  
-
-  
 
   #### 事件高级
 
@@ -540,28 +507,30 @@
   - 注册事件有两种方式：传统方式和方法监听注册方式
 
   - 传统注册方式
+
     - 利用on开头的事件，如：onclick
-    - <button onclick = "alert('hi~')"></button>
+    - 
     - btn.onclick = function (){}
     - 特点：注册事件的唯一性
     - 同一个元素同一个事件只能设置一个处理函数，**最后注册的处理函数将会覆盖前面注册的处理函数**
-    
+
   - 方法监听注册方式
+
     - W3C标准、推荐方式
     - addEvenListener()它是一个方法
     - IE9之前的IE不支持此方法，可用attachEvent（）代替
-    - 特点：同一个元素同一个事件可用注册多个监听器 
+    - 特点：同一个元素同一个事件可用注册多个监听器
     - 按注册顺序依次执行
-    
-  - **addEventListener  事件监听方式**
-    
+
+  - **addEventListener 事件监听方式**
+
     - eventTarget.addEvenListener(type,listener[, useCapture])
     - eventTarget.addEvenListener()方法将指定的监听器注册到evenTarget是（目标对象）上，当该对象触发指定的事件时，就会执行事件处理函数
-    - **该方法接收三个参数：**
+    - 该方法接收三个参数：
       - type：事件类型字符串，比如click、mouseover，注意这里不要带on
       - listener：事件处理函数，事件发生时，会调用该监听函数
       - useCapture：可选参数，是一个布尔值，默认是false。**若为true，则处于捕获阶段；为false或不写，则处于冒泡阶段。**
-    
+
   - attachEvent事件监听方式
 
     - eventTarget.attachEvent(eventNameWithOn,callback)
@@ -575,7 +544,7 @@
 
     - 注册事件兼容性解决方案：
 
-      - ```js
+      - ```
         function addEventListener(element,eventName,fn) {
         //判断当前浏览器是否支持addEventListener方法
             if (element.addEventListener) {
@@ -589,20 +558,20 @@
         }
         ```
 
-      
-
 - 删除事件（解绑事件）
 
   - 删除事件的方式
+
     - 传统注册方式：eventTarget.onclick = null;
-    
+
     - 方法监听注册方式
+
       - eventTarget.removeEventListener(type,listner[, useCapture]);
-      - eventTarget.detachEvent(eventNameWithOn,callback);                      ——与eventTarget.attachEvent()配套
-      
+      - eventTarget.detachEvent(eventNameWithOn,callback); ——与eventTarget.attachEvent()配套
+
     - 删除事件代码：
-    
-      ```js
+
+      ```
         <div>1</div>
           <div>2</div>
           <script>
@@ -620,10 +589,10 @@
               }
           </script>
       ```
-    
+
     - 删除事件兼容性函数解决方案
-    
-      - ```js
+
+      - ```
         function removeEventListener(element,eventName,fn) {
             //判断当前浏览器是否支持removeEventListener方法
             if(element.removeEventListener) {
@@ -635,32 +604,23 @@
             }
         }
         ```
-    
-      
 
 - DOM事件流
 
   - **事件流**描述的是从页面中接收事件的顺序
-
   - **事件**发生时会在元素节点之间按照特定的顺序传播，这个**传播过程即DOM事件流**
-
   - DOM事件流分为三个阶段
-
     - 捕获阶段：由DOM最顶层节点开始，然后逐级向下传播到最具体的元素接收的过程
     - 当前目标阶段
     - 冒泡阶段：事件开始时由最具体的元素接收，然后逐级向上传播到DOM最顶层节点的过程
-
   - 实际开发更关注事件冒泡
-
   - 有些事件是没有冒泡的，如：onblur、onfocus、onmouseenter、onmouseleave
-
-    
 
 - 事件对象
 
   - 什么是事件对象
 
-    - ```js
+    - ```
       eventTarget.onclick = function(event) {}
       eventTarget.addEventListener('click',function(event) {})
       //这个event就是事件对象，我们通常也写成e或者evt
@@ -675,16 +635,16 @@
 
     - 简单理解：事件发生后，**跟事件相关的一系列信息数据的集合**都放到这个对象里面，这个对象就**是事件对象event**，它有很多属性和方法
 
-    - 事件对象也有兼容性问题（ie678），通过window.event（兼容性的写法）—— **<u>e = e || window.event</u>**
+    - 事件对象也有兼容性问题（ie678），通过window.event（兼容性的写法）—— **e = e || window.event**
 
   - 事件对象的常见属性和方法
 
     - | 事件对象属性方法    | 说明                                                         |
       | ------------------- | ------------------------------------------------------------ |
-      | e.target            | 返回触发事件的对象          标准                             |
-      | e.srcElement        | 返回触发事件的对象        非标准（ie678使用）                |
-      | e.type              | 返回事件的类型 比如click  mouseover  不带on                  |
-      | e.cancelBubble      | 该属性组织冒泡    非标准（ie678使用）                        |
+      | e.target            | 返回触发事件的对象 标准                                      |
+      | e.srcElement        | 返回触发事件的对象 非标准（ie678使用）                       |
+      | e.type              | 返回事件的类型 比如click mouseover 不带on                    |
+      | e.cancelBubble      | 该属性组织冒泡 非标准（ie678使用）                           |
       | e.returnValue       | 该属性阻止默认事件（默认行为）， 非标准（ie678使用），比如不让链接跳转 |
       | e.preventDefault()  | 该方法阻止默认事件（默认行为），标准，比如不让链接跳转       |
       | e.stopPropagation() | 阻止冒泡，标准                                               |
@@ -696,7 +656,7 @@
 
     - 阻止默认事件
 
-      ```js
+      ```
       <script>
               var a = document.querySelector('a');
               a.addEventListener('click'function(e) {
@@ -714,16 +674,15 @@
           </script>
       ```
 
-      
-
 - 阻止事件冒泡
 
   - 阻止事件冒泡的两种方式
+
     - 标准写法：利用事件对象里面的stopPropagation()方法**（写在需要出现的事件中）**
-    
+
     - 非标准写法：IE678利用事件对象cancelBubble属性
-    
-    - ```js
+
+    - ```
         <div class="father">
               <div class="son">son</div>
           </div>
@@ -743,18 +702,16 @@
               });
           </script>
       ```
-    
+
   - 阻止事件冒泡的兼容性解决方案
 
-    ```js
+    ```
     if(e && e.stopPropagation) {
        e.stopPropagation();
     } else {
         window.event.cancelBubble = true;
     }
     ```
-
-    
 
 - 事件委托
 
@@ -767,7 +724,7 @@
 
   - 事件委托的作用：只操作了一次DOM，就提高了程序的性能
 
-  - ```js
+  - ```
      <ul>
             <li>弹框弹框</li>
             <li>弹框弹框</li>
@@ -786,8 +743,6 @@
         </script>
     ```
 
-    
-
 - 常用的鼠标事件
 
   - | 鼠标事件    | 触发条件         |
@@ -805,7 +760,7 @@
 
     - contextmenu只要控制应该合适显示上下文菜单，主要用于程序员取消默认的上下文菜单
 
-    - ```js
+    - ```
       document.addEventListener('contextmenu',function(e) {
       e.preventDefault();
       })
@@ -813,15 +768,15 @@
 
   - 禁止鼠标选中（selectstart开始选中）
 
-    - ```js
+    - ```
       document.addEventListener('selectstart',function(e) {
        e.preventDefault();
       })
       ```
 
-    ​       例子：
+     例子：
 
-    ```js
+    ```
     我是一段不愿意分享的文字
         <script>
             //contextmenu可以禁用右键菜单
@@ -834,8 +789,6 @@
             })
         </script>
     ```
-
-    
 
   - 鼠标事件对象
 
@@ -850,15 +803,13 @@
       | e.screenX    | 返回鼠标相对于电脑屏幕的X坐标             |
       | e.screenY    | 返回鼠标相对于电脑屏幕的Y坐标             |
 
-      
-
 - 常用的键盘事件
 
   - | 键盘事件   | 触发条件                                                     |
     | ---------- | ------------------------------------------------------------ |
     | onkeyup    | 某个键盘按键被松开时触发                                     |
     | onkeydown  | 某个键盘按键被按下时触发                                     |
-    | onkeypress | 某个键盘按键被按下时 触发  **（但它不识别功能键，如ctrl、shift、箭头等）** |
+    | onkeypress | 某个键盘按键被按下时 触发 **（但它不识别功能键，如ctrl、shift、箭头等）** |
 
     - 注意：
       - 如果使用addEventListener 不需要加on
@@ -867,21 +818,15 @@
 
   - 键盘事件对象
 
-    - | 键盘事件对象  <u>属性</u> | 说明                  |
-      | ------------------------- | --------------------- |
-      | keyCode                   | 返回**该键**的ASCII值 |
+    - | 键盘事件对象 属性 | 说明                  |
+      | ----------------- | --------------------- |
+      | keyCode           | 返回**该键**的ASCII值 |
 
     - 注意：**onkeydown和onkeyup不区分字母大小写，onkeypress区分字母大小写**
 
-      ​            我们在实际开发中，更多的使用keydown和keyup，它能识别所有的键（包括功能键）
+       我们在实际开发中，更多的使用keydown和keyup，它能识别所有的键（包括功能键）
 
-      ​            keypress不识别功能键，但是keyCode属性能区分大小写，返回不同的ASCII值
-
-      
-
-
-
-
+       keypress不识别功能键，但是keyCode属性能区分大小写，返回不同的ASCII值
 
 ### BOM
 
@@ -909,7 +854,7 @@
 
   - 窗口加载事件
 
-    - ```js
+    - ```
       window.onload = function() {}
       或者
       window.addEventListener("load",function() {});
@@ -923,7 +868,7 @@
       - window.onload传统注册方式只能写一次，如果有多个，会以最后一个window.onload为准
       - 如果使用addEventListener则没有限制
 
-    - ```js
+    - ```
       document.addEventListener('DOMContentLoaded',function(){})
       DOMContentLoaded事件触发时，仅当DOM加载完成，不包括样式表，图片，flash等等（IE9以上支持）
       ```
@@ -932,7 +877,7 @@
 
   - 调整窗口大小事件
 
-    - ```js
+    - ```
       window.onresize = function() {}
       或者
       window.addEventListener("resize",function() {});
@@ -945,8 +890,6 @@
       - 只要窗口大小发生像素变化，就会触发这个事件
       - 我们经常利用这个事件完成响应式布局。**window.innerWidth为当前屏幕的宽度**
 
-      
-
 - 定时器
 
   - window对象给我们提供了2个非常好用的方法——定时器
@@ -956,7 +899,7 @@
 
   - setTimeout（）定时器
 
-    - ```js
+    - ```
       window.setTimeout(调用函数，[延迟的毫秒数])；
       ```
 
@@ -968,7 +911,7 @@
 
       - 这个调用函数可以直接写函数，或者写函数名 或者采取字符串‘函数名（）’三种形式。第三种不推荐
 
-        ```js
+        ```
         直接写函数：setTimeout(function() {
                      console.log('时间到了');
                  },2000)
@@ -980,7 +923,7 @@
 
       - 因为定时器可能有很多，所有我们经常给定时器赋值一个标识符
 
-        ```js
+        ```
          var time1 = setTimeout(calkback,3000);
          var time2 = setTimeout('calkback()',5000); 
         ```
@@ -990,11 +933,11 @@
       - 普通函数是按照代码顺序直接调用
       - 而这个函数，**需要等待**时间，时间到了才去调用这个函数，因此称为回调函数
       - 简单理解：回调，就是回头调用的意思。上一件事干完，再**回**头再**调**用这个**函数**。
-      - 之前的element.onclick = function() {}  或者   element.addEventListener('click',fn);里面的函数也是回调函数
+      - 之前的element.onclick = function() {} 或者 element.addEventListener('click',fn);里面的函数也是回调函数
 
   - 停止setTimeout（）定时器
 
-    - ```js
+    - ```
       window.clearTimeout(timeoutID)
       ```
 
@@ -1005,7 +948,7 @@
       - window可以省略
       - **里面的参数就是定时器的标识符**
 
-    - ```js
+    - ```
       <button>点击停止定时器</button>
           <script>
               var btn = document.querySelector('button');
@@ -1018,11 +961,9 @@
           </script>
       ```
 
-      
-
   - setInterval()定时器
 
-    - ```js
+    - ```
       window.setInterval(回调函数，[间隔的毫秒数]);
       ```
 
@@ -1037,7 +978,7 @@
 
   - 停止setInterval（）定时器
 
-    - ```js
+    - ```
       window.clearInterval(intervalID);
       ```
 
@@ -1054,7 +995,7 @@
 
     - 全局作用域或者普通函数中this指向全局对象window（**注意定时器里面的this指向window**）
 
-    - ```;
+    - ```
       console.log('this');
       
       function fn() {
@@ -1069,7 +1010,7 @@
 
     - 方法调用中 谁调用 this指向谁
 
-      ```js
+      ```
       var o = {
           sayHi: function() {
               console.log('this');             //this指向的是这个o对象
@@ -1083,14 +1024,12 @@
 
     - 构造函数中this指向构造函数的实例
 
-      ```js
+      ```
       function Fun() {
       console.log('this');       //this指向的是fun实例对象
       }
       var fun = new Fun();
       ```
-
-      
 
 - JS执行队列
 
@@ -1121,11 +1060,9 @@
 
     - 一旦执行栈中的所有同步任务执行完毕，系统就会按次序读取**任务队列**中的异步任务，于是被读取的异步任务结束等待状态，进入执行栈，开始执行
 
-      ![QQ图片20211225195234](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211225195234.png)
+      ![QQ图片20211225195234]()
 
     - 由于主线程不断地重复获得任务、执行任务、再获取任务、再执行，所以这种机制被称为**事件循环（event loop）**
-
-      
 
 - location对象
 
@@ -1140,12 +1077,12 @@
     - URL的一般语法格式为：
 
       - protocol://host[:port]/path/[?query]#fragment
-      - http://www.itcast.cn/index.html?name=andy&age=18#link
+      - [http://www.itcast.cn/index.html?name=andy&age=18#link](https://gitee.com/link?target=http%3A%2F%2Fwww.itcast.cn%2Findex.html%3Fname%3Dandy%26age%3D18%23link)
 
     - | 组成     | 说明                                                         |
       | -------- | ------------------------------------------------------------ |
       | protocol | 通信协议，常用的http，ftp，maito等                           |
-      | host     | 主机（域名） www.itheima.com                                 |
+      | host     | 主机（域名） [www.itheima.com](https://gitee.com/link?target=http%3A%2F%2Fwww.itheima.com) |
       | port     | 端口号 ，可选，省略时使用方案的默认端口，如http的默认端口为80 |
       | path     | 路径，由零或多个'/'符号隔开的字符串，一般用来表示主机上的一个目录或文件地址 |
       | query    | 参数，以键值对的形式，通过&符号分隔开来                      |
@@ -1153,14 +1090,14 @@
 
   - location对象的属性
 
-    - | location对象属性  | 返回值                               |
-      | ----------------- | ------------------------------------ |
-      | location.href     | 获取或者设置 整个URL                 |
-      | location.host     | 返回主机（域名） www.itheima.com     |
-      | location.port     | 返回端口号 ，如果未写返回空字符串    |
-      | location.pathname | 返回路径                             |
-      | location.search   | 返回参数                             |
-      | location.hash     | 返回片段 #后面内容，常见于链接、锚点 |
+    - | location对象属性  | 返回值                                                       |
+      | ----------------- | ------------------------------------------------------------ |
+      | location.href     | 获取或者设置 整个URL                                         |
+      | location.host     | 返回主机（域名） [www.itheima.com](https://gitee.com/link?target=http%3A%2F%2Fwww.itheima.com) |
+      | location.port     | 返回端口号 ，如果未写返回空字符串                            |
+      | location.pathname | 返回路径                                                     |
+      | location.search   | 返回参数                                                     |
+      | location.hash     | 返回片段 #后面内容，常见于链接、锚点                         |
 
       **重点记住：href和search**
 
@@ -1172,7 +1109,7 @@
       | location.replace() | 替换当前页面，因为不记录历史，所以不能后退页面               |
       | location.reload()  | 重新加载页面，相当于刷新按钮或者f5.如果参数为true，强制刷新ctrl+f5 |
 
-    - ```js
+    - ```
         <button>点击</button>
           <script>
               var btn = document.querySelector('button');
@@ -1186,23 +1123,19 @@
           </script>
       ```
 
-      
-
 - navigator对象
 
   - navigator对象包含有关浏览器的信息，它有很多属性，我们最常用的是userAgent，该属性可以返回由客户机发送服务器的user-agent头部的值
 
   - 下面前端代码可以判断用户那个终端打开页面，实现跳转
 
-    ```js
+    ```
     if((navigator.userAgent.match(/(phone|pad|pod|iPhone|ios|ipad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i))) {
         window.location.href = '';       //手机
     } else {
         window.location.href = '';        //电脑
     }
     ```
-
-    
 
 - history对象
 
@@ -1215,5 +1148,3 @@
     | go(参数)        | 前进后退功能，参数如果是1，前进1个页面；如果是-1，后退一个页面 |
 
   - history对象一般在实际开发中比较少用，但是会在一些OA办公系统中见到
-
-    

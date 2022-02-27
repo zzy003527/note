@@ -13,7 +13,7 @@
 
   - 标签的结构图：
 
-    ​                                                       ![ ](C:\Users\ZZY\Desktop\学习资料\markdown插图\866C379156186A387EBD83309506952F.png)
+    ​                                                       ![ ](C:\Users\ZZY\Desktop\study\markdown插图\866C379156186A387EBD83309506952F.png)
 
     ​                                                                   开始标签     包裹的内容       结束标签
 
@@ -31,7 +31,7 @@
 
   - 标签的完整结构图：
 
-    ![225FA886119005F43B0CD15FD7B07D67](C:\Users\ZZY\Desktop\学习资料\markdown插图\225FA886119005F43B0CD15FD7B07D67.jpg)
+    ![225FA886119005F43B0CD15FD7B07D67](C:\Users\ZZY\Desktop\study\markdown插图\225FA886119005F43B0CD15FD7B07D67.jpg)
 
     属性名=”属性值“
 
@@ -51,8 +51,8 @@
 
   - 父子关系（嵌套关系）
 
-    ![QQ图片20211016114928](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211016114928.png)
+    ![QQ图片20211016114928](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211016114928.png)
 
   - 兄弟关系（并列关系）
 
-    ![QQ图片20211016114948](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211016114948.png)
+    ![QQ图片20211016114948](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211016114948.png)

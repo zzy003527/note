@@ -131,7 +131,7 @@
     | element.clientWidth | 返回自身包括padding、内容区的高度，不含边框，返回数值不带单位 |
     | element.scrollWidth | 返回自身实际的宽度，不含边框，返回数值不带单位               |
 
-    ![QQ图片20211226165728](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211226165728.png)
+    ![QQ图片20211226165728](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211226165728.png)
 
   - 它们的主要用法：
 

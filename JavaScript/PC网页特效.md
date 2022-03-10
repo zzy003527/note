@@ -96,12 +96,12 @@
     | element.scrollWidth  | 返回自身实际的宽度，不含边框，返回数值不带单位 |
     | element.scrollHeight | 返回自身实际的高度，不含边框，返回数值不带单位 |
 
-    ![QQ图片20211226154737](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211226154737.png)
+    ![QQ图片20211226154737](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211226154737.png)
 
   - 页面被卷去的头部
 
     - 如果浏览器的高（或宽）度不足以显示整个页面时，会自动出现滚动条。当滚动条向下滚动时，页面上被隐藏掉的高度，我们就称为页面被卷去的头部。滚动条在滚动时会触发onscroll事件。
-    - 页面被卷去的头部：可以通过window.pageYOffset获得，如果是被卷去的左侧用window.pageXOffset
+    - **页面被卷去的头部：可以通过window.pageYOffset获得，如果是被卷去的左侧用window.pageXOffset**
 
   - 页面被卷去的头部兼容性解决方案
 

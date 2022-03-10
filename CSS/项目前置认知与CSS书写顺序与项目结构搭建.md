@@ -68,13 +68,13 @@
 
     - keywords：网页关键词标签
 
-      ![QQ图片20211201113256](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211201113256.png)
+      ![QQ图片20211201113256](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211201113256.png)
 
 - ico图标设置
 
   - 场景：显示在标签页标题左侧的小图标，习惯使用.ico格式的图标
 
-    ![QQ图片20211201113909](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211201113909.png)
+    ![QQ图片20211201113909](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211201113909.png)
 
   - 常见代码
 

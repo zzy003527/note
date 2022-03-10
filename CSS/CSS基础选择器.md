@@ -6,7 +6,7 @@
 
 - 标签选择器
 
-  - 结构：标签名{css属性名：属性值；}                                                                                              ![QQ图片20211018234520](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211018234520.png)
+  - 结构：标签名{css属性名：属性值；}                                                                                              ![QQ图片20211018234520](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211018234520.png)
 
   - 作用：通过标签名，找到页面中所有这类标签，设置样式
 
@@ -18,7 +18,7 @@
 
   - 结构：**.类名**{css属性名：属性值；}
 
-    ![QQ图片20211018235559](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211018235559.png)
+    ![QQ图片20211018235559](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211018235559.png)
 
   - 作用：通过类名，找到页面中所有带有这个类名的标签，设置样式
 
@@ -33,7 +33,7 @@
 
   - 结构：#id属性值{css属性名：属性值；}
 
-    ![QQ图片20211019133925](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211019133925.png)
+    ![QQ图片20211019133925](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211019133925.png)
 
   - 作用：通过id属性值，找到页面中带有这个id属性值的标签，设置样式
 
@@ -61,7 +61,7 @@
 
   - 结构：*{css属性名：属性值；}
 
-    ![QQ图片20211019135543](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211019135543.png)
+    ![QQ图片20211019135543](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211019135543.png)
 
   - 作用：找到页面中所有的标签，设置样式
 

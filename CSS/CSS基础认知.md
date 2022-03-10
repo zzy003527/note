@@ -14,7 +14,7 @@
 
   - 怎么写？
 
-    ​              ![QQ图片20211018140947](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211018140947.png)
+    ​              ![QQ图片20211018140947](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211018140947.png)
 
     
 
@@ -22,7 +22,7 @@
 
   - 常见属性：
 
-  ​       ![QQ图片20211018141155](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211018141155.png)![QQ图片20211018141213](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211018141213.png)
+  ​       ![QQ图片20211018141155](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211018141155.png)![QQ图片20211018141213](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211018141213.png)
 
   - 注意点：
     - CSS标点符号都是**英文状态**下的

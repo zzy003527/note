@@ -189,7 +189,7 @@
 
     - JSON语法注意事项
 
-      - 属性名必须使用双引号包裹
+      - **<u>属性名必须使用双引号包裹</u>**
       - 字符串类型的值必须使用双引号包裹
       - JSON中不允许使用单引号表示字符串
       - JSON中不能写注释
@@ -268,7 +268,7 @@
       function itheima(options) {
           var xhr = new XHLHttpRequest()
           //拼接查询字符串
-          var qs = resolveData(options,data)
+          var qs = resolveData(options.data)
           
           //监听请求状态改变的事件
           xhr.onreadystatechange = function() {
@@ -287,7 +287,7 @@
       ```js
       if(opotions.method.toUpperCase() === 'GET') {
           xhr.open(options.method,options.url + '?' + qs)
-          xhr,send()
+          xhr.send()
       }else if (options.method.toUpperCase() === 'POST') {
           //发起POST请求
           xhr.open(options.method,options.url)
@@ -329,7 +329,7 @@
       }
       ```
 
-    - 注意：设置在open函数之前
+    - 注意：**设置在open函数之前**
 
   - FormData对象管理表单数据
 
@@ -358,7 +358,7 @@
       form.addEventListener('submit',function(e) {
       e.preventDefault()
       //根据form表单创建FormData对象，会自动将表单数据填充到FormData对象中
-          var fd = ner FormData(form)
+          var fd = new FormData(form)
           var xhr = new XMLHttpRequest()
           xhr.open('POST','http://www.liulongbin.top:3006/api/fromdata')
           xhr.send(fd)

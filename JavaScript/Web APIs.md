@@ -25,7 +25,7 @@
   - ![QQ图片20211215121307](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211215121307.png)
   - 文档：一个页面就是一个文档，DOM中使用document表示
   - 元素：页面中的所有标签都是元素，DOM中使用element表示
-  - 节点：网页中的所有内容都是节点（标签、属性、文本、注释等），DOM中使用node表示
+  -   节点：网页中的所有内容都是节点（标签、属性、文本、注释等），DOM中使用node表示
   - **DOM把以上内容都看作是对象**
 
 - 如何获取页面元素
@@ -509,7 +509,6 @@
   - 传统注册方式
 
     - 利用on开头的事件，如：onclick
-    - 
     - btn.onclick = function (){}
     - 特点：注册事件的唯一性
     - 同一个元素同一个事件只能设置一个处理函数，**最后注册的处理函数将会覆盖前面注册的处理函数**
@@ -644,7 +643,7 @@
       | e.target            | 返回触发事件的对象 标准                                      |
       | e.srcElement        | 返回触发事件的对象 非标准（ie678使用）                       |
       | e.type              | 返回事件的类型 比如click mouseover 不带on                    |
-      | e.cancelBubble      | 该属性组织冒泡 非标准（ie678使用）                           |
+      | e.cancelBubble      | 该属性阻止冒泡 非标准（ie678使用）                           |
       | e.returnValue       | 该属性阻止默认事件（默认行为）， 非标准（ie678使用），比如不让链接跳转 |
       | e.preventDefault()  | 该方法阻止默认事件（默认行为），标准，比如不让链接跳转       |
       | e.stopPropagation() | 阻止冒泡，标准                                               |
@@ -659,7 +658,7 @@
       ```
       <script>
               var a = document.querySelector('a');
-              a.addEventListener('click'function(e) {
+              a.addEventListener('click',function(e) {
                   e.preventDefault();     //dom标准写法
               })
       //传统的注册方式
@@ -748,7 +747,7 @@
   - | 鼠标事件    | 触发条件         |
     | ----------- | ---------------- |
     | onclick     | 鼠标点击左键触发 |
-    | oncouseover | 鼠标经过触发     |
+    | onmouseover | 鼠标经过触发     |
     | onmouseout  | 鼠标离开触发     |
     | onfocus     | 获得鼠标焦点触发 |
     | onblur      | 失去鼠标焦点触发 |
@@ -1060,7 +1059,7 @@
 
     - 一旦执行栈中的所有同步任务执行完毕，系统就会按次序读取**任务队列**中的异步任务，于是被读取的异步任务结束等待状态，进入执行栈，开始执行
 
-      ![QQ图片20211225195234]()
+      ![QQ图片20211225195234](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211225195234.png)
 
     - 由于主线程不断地重复获得任务、执行任务、再获取任务、再执行，所以这种机制被称为**事件循环（event loop）**
 

@@ -147,7 +147,7 @@
     | 方向     | 属性          | 效果                 |
     | -------- | ------------- | -------------------- |
     | 水平方向 | margin-left   | 让当前盒子往右移动   |
-    | 水平方向 | margin-right  | 让右边的盒子王右移动 |
+    | 水平方向 | margin-right  | 让右边的盒子往右移动 |
     | 垂直方向 | margin-top    | 让当前的盒子往下移动 |
     | 垂直方向 | margin-bottom | 让下面的盒子往下移动 |
 
@@ -157,7 +157,7 @@
     - 比如：body标签默认有margin：8px
     - 比如：p标签默认有上下的margin
     - 比如：ul标签默认有上下的margin和padding-left
-  - 解决方法：![QQ图片20211127140738](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211127140738.png)
+  - 解决方法：![QQ图片20211127140738](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211127140738.png)
 
 - 外边、距正常情况
 

@@ -4,7 +4,7 @@
 
   - **Node.js是**一个基于Chrome V8引擎的**JavaScript运行环境**
   - Node.js的官网地址：https://nodejs.rog/zh-cn/
-  - **浏览器**是JavaScript的**前端运行环境**，而**Node.js**是Ja-vaScript的**后端运行环境**
+  - **浏览器**是JavaScript的**前端运行环境**，而**Node.js**是JavaScript的**后端运行环境**
   - Node.js中**无法调用**DOM和BOM等**浏览器内置API**
 
 - Node.js可以做什么
@@ -86,7 +86,7 @@
     - 语法格式：
 
     ```js
-    fa.write(file,data[,option],callback);
+    fs.writeFile(file,data[,option],callback);
     ```
 
     - 参数解读：
@@ -461,7 +461,7 @@
         server.on('request', (req,res) => {
             //发送的内容包含中文
             const str = '您请求的url地址是 ${req.url}，请求的method类型是 ${req.method}';
-            //为了防止中文显示乱码的问题，需调用rex.setHeader()方法，设置响应头 Content-Type 的值为 text/html:charset=utf-8
+            //为了防止中文显示乱码的问题，需调用res.setHeader()方法，设置响应头 Content-Type 的值为 text/html:charset=utf-8
             res.setHeader('Content-Type','text/html;charset=utf-8');
             //把包含中文的内容，响应给客户端
             res.end(str);
@@ -509,9 +509,9 @@
     - 核心思路：
 
       - 把文件的实际存放路径，作为每个资源请求的url地址
-    
+  
 - 实现步骤：
-    
+  
   - 步骤1：导入需要的模块
     
     - ```js
@@ -521,7 +521,7 @@
           const fs = require('fs')
           // 1.3导入path路径处理模块
           const path = require('path')
-          ```
+      ```
     
   - 步骤2创建基本的web服务器
     
@@ -534,7 +534,7 @@
           server.listen(80,function() {
               console.log('server listen at http://127.0.0.1');
           })
-          ```
+      ```
     
   - 步骤3：将资源的请求url地址映射为文件的存放路径
     
@@ -543,7 +543,7 @@
           const url = req.url
           // 3.2 把请求的url地址，映射为本地文件的存放路径
           const fpath = path.join(__dirname,url)
-          ```
+      ```
     
   - 步骤4：读取文件内容并响应给客户端
     
@@ -557,7 +557,7 @@
               // 4.3 读取文件成功后，将读取成功的内容响应给客户端
               res.end(dataStr)
           })
-          ```
+      ```
     
   - 步骤5：优化资源的请求路径
     
@@ -572,6 +572,6 @@
               // 5.3 如果请求的路径不为 / ,则动态拼接文件的存放路径
               fpath = path.join(__dirname,'./clock',url)
           }
-          ```
+      ```
     
     

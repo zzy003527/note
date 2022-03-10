@@ -30,9 +30,9 @@
 
 - 小结：
 
-  ![QQ图片20211021141607](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211021141607.png)
+  ![QQ图片20211021141607](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211021141607.png)
 
-- 查错流程：![QQ图片20211127113123](C:\Users\ZZY\Desktop\学习资料\markdown插图\QQ图片20211127113123.png)
+- 查错流程：![QQ图片20211127113123](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20211127113123.png)
 
   
 

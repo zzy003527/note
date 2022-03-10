@@ -11,10 +11,10 @@
       | URL                                | 是否同源 | 原因                                    |
       | ---------------------------------- | -------- | --------------------------------------- |
       | http://www.test.com/other.html     | 是       | 同源（协议、域名、端口相同）            |
-      | http://www.test.com/about.html     | 否       | 协议不同（http和https）                 |
+      | https://www.test.com/about.html    | 否       | 协议不同（http和https）                 |
       | http://blog.test.com/movie.html    | 否       | 域名不同（www.test.com与blog.test.com） |
       | http://www.test.com:7001/home.html | 否       | 端口不同（默认的80端口和7001端口）      |
-      | http://www.test.con:80/main.html   | 是       | 同源（协议、域名、端口相同）            |
+      | http://www.test.com:80/main.html   | 是       | 同源（协议、域名、端口相同）            |
 
   - 什么是**同源策略**
 
@@ -187,7 +187,7 @@
           }
           timer = setTimeout(function() {
               $(angel).css('left',e.pageX + 'px').css('top',e.pageY + 'px')
-              timer = null          //2.当设置了鼠标跟随效果后，请情况timer节流阀，方便下次开启延时器
+              timer = null          //2.当设置了鼠标跟随效果后，请清空timer节流阀，方便下次开启延时器
           }，16)
       })
       })

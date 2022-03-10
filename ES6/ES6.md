@@ -426,41 +426,99 @@ ES6
 
         
 
+  - Map数据结构
+
+    - Map 结构提供了“值—值”的对应，是一种更完善的 Hash 结构实现。如果你需要“键值对”的数据结构，Map 比 Object 更合适。
+
+    - ```js
+      const m = new Map();
+      const o = {p: 'Hello World'};
+      
+      m.set(o, 'content')
+      m.get(o) // "content"
+      
+      m.has(o) // true
+      m.delete(o) // true
+      m.has(o) // false
+      
+      //上面代码使用 Map 结构的set方法，将对象o当作m的一个键，然后又使用get方法读取这个键，接着使用delete方法删除了这个键。
+      ```
+    
+    - 作为构造函数，Map 也可以接受一个数组作为参数。该数组的成员是一个个表示键值对的数组。
+    
+      ```js
+      const map = new Map([
+        ['name', '张三'],
+        ['title', 'Author']
+      ]);
+      
+      map.size // 2
+      map.has('name') // true
+      map.get('name') // "张三"
+      map.has('title') // true
+      map.get('title') // "Author"
+      ```
+
+    - 如果对同一个键多次赋值，后面的值将覆盖前面的值。
+
+    - 如果读取一个未知的键，则返回`undefined`。
+    
+    - Map 的键实际上是跟内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞（clash）的问题
+    
+    - 实例方法
+    
+      - `size`属性返回 Map 结构的成员总数。
+      - `set`方法设置键名`key`对应的键值为`value`，然后返回整个 Map 结构。如果`key`已经有值，则键值会被更新，否则就新生成该键。
+      - `get`方法读取`key`对应的键值，如果找不到`key`，返回`undefined`。
+      - `has`方法返回一个布尔值，表示某个键是否在当前 Map 对象之中
+      - `delete`方法删除某个键，返回`true`。如果删除失败，返回`false`。
+      - `clear`方法清除所有成员，没有返回值。
+    
+    - 遍历方法
+    
+      - `Map.prototype.keys()`：返回键名的遍历器。
+      - `Map.prototype.values()`：返回键值的遍历器。
+      - `Map.prototype.entries()`：返回所有成员的遍历器。
+      - `Map.prototype.forEach()`：遍历 Map 的所有成员。
+      - **需要特别注意的是，Map 的遍历顺序就是插入顺序。**
+    
+    
+    
   - Set数据结构
-
+  
     - ES6提供了新的数据结构Set，它类似于数组，但是成员的值都是唯一的，没有重复的值
-
+  
     - Set本身是一个构造函数， 用来生成Set数据结构
-
+  
       ```js
       const s = new Set();
       s.size表示s的长度
       ```
-
+  
     - Set函数可以接收一个数组作为参数，用来初始化。
-
+  
       ```js
       const set = new Set([1,2,3,4,4]);
       ```
-
+  
     - 利用Set实现数组去重
-
+  
       ```js
       var arr = [1,2,3,4,4];
       const s = new Set(arr);
       const arr1 = [...s];           //[1,2,3,4]
       ```
-
+  
     - 实例方法
-
+  
       - add(value):添加某个值，返回Set结构本身
-
+  
       - delete(value)：删除某个值，返回一个布尔值，表示删除是否成功
-
+  
       - has(value)：返回一个布尔值，表示该值是否为Set的成员
-
+  
       - clear()：清除所有成员，没有返回值
-
+  
       - ```js
         const s = new Set();
         s.add(1).add(2).add(3);         //向set结构中添加值
@@ -468,11 +526,11 @@ ES6
         s.has(1);                 //表示set结构中是否有1这个值，返回布尔值
         s.clear();                //清除set结构中的所有值
         ```
-
+  
     - 遍历set
-
+  
       - Set结构的实例与数组一样，也有forEach的方法，用于对每个成员执行某种操作，没有返回值
-
+  
       - ```js
         s.forEach(value => console.log(value));
         ```

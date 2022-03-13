@@ -910,7 +910,7 @@
 
       - 这个调用函数可以直接写函数，或者写函数名 或者采取字符串‘函数名（）’三种形式。第三种不推荐
 
-        ```
+        ```js
         直接写函数：setTimeout(function() {
                      console.log('时间到了');
                  },2000)
@@ -922,7 +922,7 @@
 
       - 因为定时器可能有很多，所有我们经常给定时器赋值一个标识符
 
-        ```
+        ```js
          var time1 = setTimeout(calkback,3000);
          var time2 = setTimeout('calkback()',5000); 
         ```

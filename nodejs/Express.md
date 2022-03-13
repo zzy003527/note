@@ -336,7 +336,7 @@
 
     - **全局生效**的中间件
 
-      - 客户端发起的**任何请求**，到达服务器后，**都会触发的中间件**，叫做全局生效的zhongjj
+      - 客户端发起的**任何请求**，到达服务器后，**都会触发的中间件**，叫做全局生效的中间件
 
       - 通过调用**app.use（中间件函数）**，即可定义一个**全局生效**的中间件，实例代码如下：
 
@@ -472,7 +472,7 @@
         })
         app.use(function(err,req,res,next) {
             console.log('发生了错误',err,message)
-            res.sengd('Error' + err.message)
+            res.send('Error' + err.message)
         })
         ```
 

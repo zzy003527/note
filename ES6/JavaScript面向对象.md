@@ -244,7 +244,7 @@
           constructor(uname,age) {
               this.uname = uname;
               this.age = age;
-              this,sing();      //需要通过对象自己（this）才能调用自己的方法
+              this.sing();      //需要通过对象自己（this）才能调用自己的方法
               this.btn = document.querySelector('button');     //此处给btn添加点击事件
               this.btn.onclick = this.sing;      //注意此处事件不需要加括号
           }
@@ -273,7 +273,7 @@
                 console.log(this);                   //指向ldh等创建出来的实例对象
                 this.uname = uname;                   
                 this.age = age;
-                this,sing();      
+                this.sing();      
                 this.btn = document.querySelector('button');     
                 this.btn.onclick = this.sing;      
             }

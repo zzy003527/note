@@ -198,7 +198,7 @@ ES6
               console.log(this);      //箭头函数中的this指向箭头函数定义的位置，即fn，因此此this为fn的this
           }
       }
-      const resFn = fn.call(obj);         //此处用cal函数将fn的this指向obj对象，因此箭头函数中的this也指向obj对象
+      const resFn = fn.call(obj);         //此处用call函数将fn的this指向obj对象，因此箭头函数中的this也指向obj对象
       resFn();                                //因此此两个输出的this均为obj对象
       ```
 

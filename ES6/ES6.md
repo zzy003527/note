@@ -426,10 +426,81 @@ ES6
 
         
 
+  - Symbol
+
+    - 概念：ES6 引入了一种新的原始数据类型Symbol，表示独一无二的值。它是 JavaScript 语言的第七种数据类型，前六种是：undefined、null、布尔值（Boolean）、字符串（String）、数值（Number）、对象（Object）。
+
+    - 特点
+    
+      - Symbol属性对应的值是唯一的，解决**命名冲突问题**
+      - Symbol值不能与其他数据进行计算，包括同字符串拼串
+      - for in、for of 遍历时不会遍历Symbol属性。
+    
+    - 创建Symbol属性值
+    
+      - Symbol是函数，但并不是构造函数。创建一个Symbol数据类型：
+    
+        ```js
+         let mySymbol = Symbol();
+         console.log(typeof mySymbol);  //打印结果：symbol
+         console.log(mySymbol);         //打印结果：Symbol()
+        ```
+    
+    - Symbol的使用
+    
+      - 将Symbol作为对象的属性值
+    
+        ```js
+        let mySymbol = Symbol();
+            let obj = {
+                name: 'smyhvae',
+                age: 26
+            };
+            //obj.mySymbol = 'male'; //错误：不能用 . 这个符号给对象添加 Symbol 属性。
+            obj[mySymbol] = 'hello';    //正确：通过**属性选择器**给对象添加 Symbol 属性。后面的属性值随便写。
+            console.log(obj);
+        ```
+
+      - 创建Symbol属性值时，传参作为标识
+    
+        ```js
+        //如果通过 Symbol()函数创建了两个值，这两个值是不一样的：
+            let mySymbol1 = Symbol();
+            let mySymbol2 = Symbol();
+            console.log(mySymbol1 == mySymbol2); //打印结果：false
+            console.log(mySymbol1);         //打印结果：Symbol()
+            console.log(mySymbol2);         //打印结果：Symbol()
+        ```
+    
+      - 最后两行的打印结果却发现，二者的打印输出，肉眼看到的却相同。那该怎么区分它们呢？
+    
+        既然Symbol()是函数，函数就可以传入参数，我们可以通过参数的不同来作为**标识**。比如：
+    
+        ```js
+          //在括号里加入参数，来标识不同的Symbol
+            let mySymbol1 = Symbol('one');
+            let mySymbol2 = Symbol('two');
+        
+            console.log(mySymbol1 == mySymbol2); //打印结果：false
+            console.log(mySymbol1);         //打印结果：Symbol(one)
+            console.log(mySymbol2);         //打印结果：Symbol(two)。颜色为红色。
+            console.log(mySymbol2.toString());//打印结果：Symbol(two)。颜色为黑色。
+        ```
+    
+      - 定义常量
+    
+        - Symbol 可以用来定义常量：
+    
+          ```js
+             const MY_NAME = Symbol('my_name');
+          ```
+    
+      
+    
   - Map数据结构
-
+  
     - Map 结构提供了“值—值”的对应，是一种更完善的 Hash 结构实现。如果你需要“键值对”的数据结构，Map 比 Object 更合适。
-
+  
     - ```js
       const m = new Map();
       const o = {p: 'Hello World'};
@@ -458,9 +529,9 @@ ES6
       map.has('title') // true
       map.get('title') // "Author"
       ```
-
+  
     - 如果对同一个键多次赋值，后面的值将覆盖前面的值。
-
+  
     - 如果读取一个未知的键，则返回`undefined`。
     
     - Map 的键实际上是跟内存地址绑定的，只要内存地址不一样，就视为两个键。这就解决了同名属性碰撞（clash）的问题

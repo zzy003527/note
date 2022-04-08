@@ -73,7 +73,7 @@
 
     - async函数返回一个 Promise 对象。
 
-    - async函数内部retur语句返回的值，会成为then方法回调函数的参数。
+    - async函数内部return语句返回的值，会成为then方法回调函数的参数。
 
       如：
 

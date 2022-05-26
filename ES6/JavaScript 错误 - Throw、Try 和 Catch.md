@@ -41,7 +41,7 @@
     {
     try
       {
-      adddlert("Welcome guest!");
+      alert("Welcome guest!");
       }
     catch(err)
       {

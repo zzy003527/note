@@ -52,7 +52,7 @@
 
     - value：设置属性值
 
-    - writable：标识当前属性是否可以被修改。默认为false，不可删除
+    - writable：标识当前属性是否可以被修改。默认为false，不可修改
 
     - configurable：标识当前属性是否可以被删除。默认为false，不可删除
 

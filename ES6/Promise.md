@@ -2,7 +2,7 @@
 
 - 概述：
 
-  - Promise对象：代表了未来某个将要发生的事情（通常是一个异步操作）
+  - Promise对象：**代表了未来某个将要发生的事情**（通常是一个异步操作）
 
   - ES6中的promise对象，可以将异步操作以同步的流程表达出来，很好的解决了回调地狱的问题（避免了层次嵌套的回调函数）。在使用ES5的时候，在多层嵌套回调时，写完的代码层次过多，很难进行维护和二次开发
 
@@ -20,10 +20,12 @@
 
 - Promise基本用法
 
-  - ES6 规定，`Promise`对象是一个构造函数，用来生成`Promise`实例。
+  - **<u>Promise 新建后就会立即执行。(先于同步）</u>**
+
+  - ES6 规定，`Promise`对象是一个构造函数 ，用来生成`Promise`实例。
 
     下面代码创造了一个`Promise`实例。
-
+  
     ```js
     const promise = new Promise(function(resolve, reject) {
       // ... some code
@@ -41,7 +43,7 @@
   - `resolve`函数的作用是，将`Promise`对象的状态从“未完成”变为“成功”（即从 pending 变为 fulfilled），在异步操作成功时调用，并将异步操作的结果，作为参数传递出去
 
   - `reject`函数的作用是，将`Promise`对象的状态从“未完成”变为“失败”（即从 pending 变为 rejected），在异步操作失败时调用，并将异步操作报出的错误，作为参数传递出去。
-
+  
     - `reject()`方法的作用，等同于抛出错误。
     - 如果 Promise 状态已经变成`resolved`，再抛出错误是无效的。
 
@@ -115,6 +117,8 @@
     ```
 
   - 一般来说，不要在`then()`方法里面定义 Reject 状态的回调函数（即`then`的第二个参数），总是使用`catch`方法。
+  
+  - 理由是使用catch可以捕获前面`then`方法执行中的错误**(捕获前面多个then的错误）**，也更接近同步的写法（`try/catch`）。因此，建议总是使用`catch()`方法，而不使用`then()`方法的第二个参数。
 
 
 
@@ -251,7 +255,7 @@
     //上面示例中，数组promises包含了三个请求，只有等到这三个请求都结束了（不管请求成功还是失败），removeLoadingIndicator()才会执行。
     ```
 
-  - 该方法返回的新的 Promise 实例，一旦发生状态变更，状态总是`fulfilled`，不会变成`rejected`。状态变成`fulfilled`后，它的回调函数会接收到一个数组作为参数，该数组的每个成员对应前面数组的每个 Promise 对象。
+  - 该方法返回的新的 Promise 实例，**一旦发生状态变更，状态总是`fulfilled`**，不会变成`rejected`。状态变成`fulfilled`后，它的回调函数会接收到一个数组作为参数，该数组的每个成员对应前面数组的每个 Promise 对象。
 
     ```js
     const resolved = Promise.resolve(42);
@@ -370,7 +374,7 @@
         };
         ```
 
-      - `Promise.resolve()`方法会将这个对象转为 Promise 对象，然后就立即执行`thenable`对象的`then()`方法。
+      - `Promise.resolve()`方法会将这个对象转为 Promise 对象，然后就**立即执行`thenable`对象的`then()`方法。**
 
         ```js
         let thenable = {
@@ -389,8 +393,10 @@
 
     - 参数不是具有`then()`方法的对象，或根本就不是对象
 
-      - 如果参数是一个原始值，或者是一个不具有`then()`方法的对象，则`Promise.resolve()`方法返回一个新的 Promise 对象，状态为`resolved`。
+      - 如果参数是一个原始值，或者是一个不具有`then()`方法的对象，则`Promise.resolve()`方法返回一个新的 Promise 对象，**状态为`resolved`。**
 
+      - **Promise.resolve()方法的参数，会同时传给回调函数。**
+    
         ```js
         const p = Promise.resolve('Hello');
         
@@ -406,8 +412,8 @@
 
       - `Promise.resolve()`方法允许调用时不带参数，直接返回一个`resolved`状态的 Promise 对象。
 
-        所以，如果希望得到一个 Promise 对象，比较方便的方法就是直接调用`Promise.resolve()`方法。
-
+        所以，<u>如果希望得到一个 Promise 对象，比较方便的方法就是直接调用`Promise.resolve()`方法。</u>
+    
         ```js
         const p = Promise.resolve();
         
@@ -418,8 +424,8 @@
         //上面代码中的p就是一个Promise对象
         ```
 
-      - 需要注意的是，立即`resolve()`的 Promise 对象，是在本轮“事件循环”（event loop）的结束时执行，而不是在下一轮“事件循环”的开始时。
-
+      - 需要注意的是，立即`resolve()`的 Promise 对象，是**在本轮“事件循环”（event loop）的结束时执行**，而不是在下一轮“事件循环”的开始时。
+    
         ```js
         setTimeout(function () {
           console.log('three');
@@ -513,7 +519,3 @@
       });
     };
     ```
-
-  - 
-
-  - 

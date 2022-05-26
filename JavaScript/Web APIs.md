@@ -619,7 +619,7 @@
 
   - 什么是事件对象
 
-    - ```
+    - ```js
       eventTarget.onclick = function(event) {}
       eventTarget.addEventListener('click',function(event) {})
       //这个event就是事件对象，我们通常也写成e或者evt

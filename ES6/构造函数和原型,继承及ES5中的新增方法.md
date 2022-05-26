@@ -62,6 +62,36 @@
     - 构造函数方法很好用，但是**存在浪费内存的问题**
     - 即构造函数中的方法在创建每一个实例对象的时候都会开辟新的空间来存放方法，因为方法是复杂数据类型
 
+    
+
+  - 取值函数（getter）和存值函数（setter）
+
+    - ```js
+    class MyClass {
+        constructor() {
+        // ...
+        }
+      get prop() {
+          return 'getter';
+        }
+        set prop(value) {
+          console.log('setter: '+value);
+        }
+      }
+      
+      let inst = new MyClass();
+      
+      inst.prop = 123;
+      // setter: 123
+      
+      inst.prop
+      // 'getter'
+      
+    // 上面代码中，prop属性有对应的存值函数和取值函数，因此赋值和读取行为都被自定义了。
+      ```
+
+    
+
   - 构造函数原型（原型对象）    prototype
 
     - 构造函数通过原型分配的函数是所有对象所**共享的**

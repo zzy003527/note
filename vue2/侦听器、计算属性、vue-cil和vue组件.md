@@ -6,6 +6,11 @@
 
   - **watch侦听器**允许开发者监视数据的变化，从而**针对数据的变化做特定的操作**
 
+  - 监视有两种写法
+
+    - 创建`Vue`的时候传入`watch：{}`配置
+    - 通过`vm.$watch()`配置
+
   - 语法格式：
 
     ```js
@@ -21,6 +26,11 @@
                 console.log(newVal,oldVal)
             }
         }
+    })
+    
+    // 第二种写法
+    vm.$watch('aaa',(newVal,oldVal) => {
+        console.log('aaa'被修改了,newVal,oldVal)
     })
     ```
 
@@ -133,7 +143,7 @@
                 return `rgb(${this.r},${this.g},${this.b})`
             }
         },
-        method: {
+        methods: {
             show() {
                 console.log(this.rgb)
             }
@@ -150,6 +160,19 @@
 
     - 实现了代码的复用
     - 只要计算属性中依赖的数据与变化了，则计算属性会重新求值
+  
+  
+  
+- 计算属性与侦听器的比较
+
+  - `computed`与`watch`的区别
+    - `computed`能完成的功能，`watch`都能完成
+    - `watch`能完成的功能，`computed`不一定能完成，例如`watch`可以进行异步操作
+  - 两个重要的小原则
+    - 所有被`Vue`管理的函数，最好写成普通函数，这样this的执行才是`vm`或者`组件实例对象`
+    - 所有不被`Vue`管理的函数（定时器的回调函数，ajax的回调函数，promise的回调函数等），最好写成箭头函数，这样this的指向才是`vm`或`组件实例对象`
+  - 
+  - d
 
 
 
@@ -264,10 +287,6 @@
       })
       ```
 
-    - 
-
-    - d
-
   - axios.post
 
     - 语法格式：
@@ -324,7 +343,33 @@
 
   - 若选y，则需要再命名一个预设的名字,回车
 
+- 注意：
+
+  - 启动项目`npm run serve`
+  - 打包项目`npm run build`
+  - 暂停项目`Ctrl + C`
+  
 - vue项目中src目录的构成
+
+  - ```markdown
+    .文件目录
+    ├── node_modules 
+    ├── public
+    │   ├── favicon.ico: 页签图标
+    │   └── index.html: 主页面
+    ├── src
+    │   ├── assets: 存放静态资源
+    │   │   └── logo.png
+    │   │── component: 存放组件
+    │   │   └── HelloWorld.vue
+    │   │── App.vue: 汇总所有组件
+    │   └── main.js: 入口文件
+    ├── .gitignore: git版本管制忽略的配置
+    ├── babel.config.js: babel的配置文件
+    ├── package.json: 应用包配置文件 
+    ├── README.md: 应用描述文件
+    └── package-lock.json: 包版本控制文件
+    ```
 
   - assets文件夹：存放项目中用到的静态资源文件，例如：css样式表、图片资源
   - components文件夹：程序员封装的、可复用的组件，都要放到components目录下
@@ -416,11 +461,10 @@
 
   - **若要启用less，则在style加一个属性 <u>lang="less"</u>**
 
-- 组件之间的**父子关系**
+- 组件之间的**父子关系**组件在被封装好了之后，**彼此之间是相互独立的**，不存在父子关系
 
-  - 组件在被封装好了之后，**彼此之间是相互独立的**，不存在父子关系
   - 在**使用组件**的时候，**根据彼此的嵌套关系**，形成了**父子关系，兄弟关系**
-
+  
 - 使用组件的**三个步骤**
 
   - 步骤1：使用import语法**导入需要的组件**
@@ -615,8 +659,4 @@
       </style>
       ```
 
-- 
-
-- 
-
-- 
+  

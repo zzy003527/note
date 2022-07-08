@@ -73,6 +73,71 @@
 
     - new Vue()构造函数得到的vm实例对象，就是ViewModel；el指向的选择器，就是View视图区域；data指向的对象，就是Model数据源
 
+  - VUE的el和data的两种写法
+
+    - el有两种写法
+
+      - 创建`vue`示例对象的时候配置`el`属性
+      - 先创建`vue`示例，随后通过`vm.$mount（'root')`指定`el`的值
+
+    - data有两种写法
+
+      - 对象式： data:{}
+      - 函数式： data() { return{} }
+
+    - 到了组件是，data必须使用函数式
+
+    - 由vue管理的函数，一定不要写箭头函数，否则this就不再是vue实例了
+
+    - ```js
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8" />
+          <title>el与data的两种写法</title>
+          <!-- 引入Vue -->
+          <script type="text/javascript" src="../js/vue.js"></script>
+        </head>
+        
+        <body>
+          <div id="root">
+            <h1>你好，{{name}}</h1>
+          </div>
+        </body>
+      
+        <script type="text/javascript">
+          Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+      
+          // el的两种写法
+          // const v = new Vue({
+          // 	//el:'#root', // 第一种写法
+          // 	data: {
+          // 		name:'cess'
+          // 	}
+          // })
+          // console.log(v)
+          // v.$mount('#root') // 第二种写法
+      
+          // data的两种写法
+          new Vue({
+            el: '#root',
+            // data的第一种写法：对象式
+            // data:{
+            // 	name:'cess'
+            // }
+      
+            //data的第二种写法：函数式
+            data() {
+              console.log('@@@', this) // 此处的this是Vue实例对象
+              return {
+                name: 'cess'
+              }
+            }
+          })
+        </script>
+      </html>
+      ```
+
       
 
   #### vue的指令与过滤器
@@ -347,9 +412,10 @@
       | .capture     | 以捕获模式触发当前的事件处理函数                            |
       | .once        | 绑定的事件只触发1次                                         |
       | .self        | 只有在event.target是当前元素自身触发事件处理函数            |
-
+      | .passive     | 事件的默认行为为立即执行，无需等待事件回调执行完毕          |
+      
     - 例如：
-
+  
       ```html
       <!-- 加在事件后面 -->
       
@@ -362,11 +428,72 @@
               </div>
           </div>
       ```
-
+  
   - 按键修饰符
-
+  
+    - VUE中常见的按键别名
+  
+      - 回车`enter`
+      - 删除`delete`捕获删除和退格键
+      - 退出`esc`
+      - 空格`space`
+      - 换行`tab`特殊，必须配合`keydown`去使用
+      - 上`up`
+      - 下`down`
+      - 左`left`
+      - 右`right`
+    
+    - 系统修饰键（用法特殊）`ctrl` `alt` `shift` `meta`(`meta`就是`win`)
+    
+      - 配合`keyup`使用：按下修饰键的同时，再按下其他键，随后释放其他键（其他键任何一个都可以），事件才被触发
+    
+        或者可以指定其他键为单一键，如指定ctrl和y一起，即`@keyup.ctrl.y`
+    
+      - 配合`keydown`使用：正常触发事件
+    
+    - Vue.config.keyCodes.自定义键名 = 键码，可以去定义按键别名
+    
+      ```js
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8" />
+          <title>键盘事件</title>
+          <!-- 引入Vue -->
+          <script type="text/javascript" src="../js/vue.js"></script>
+        </head>
+        <body>
+      
+          <div id="root">
+            <h2>欢迎打开{{name}}笔记</h2>
+            <input type="text" placeholder="按下回车提示输入" @keyup.enter="showInfo"><br/>
+            <input type="text" placeholder="按下tab提示输入" @keydown.tab="showInfo"><br/>
+            <input type="text" placeholder="按下回车提示输入" @keydown.huiche="showInfo"><br/>
+          </div>
+      
+          <script type="text/javascript">
+            Vue.config.productionTip = false	// 阻止 vue 在启动时生成生产提示。
+            Vue.config.keyCodes.huiche = 13		// 定义了一个别名按键
+      
+            new Vue({
+              el: '#root',
+              data: {
+                name: 'cess'
+              },
+              methods: {
+                showInfo(e) {
+                  // console.log(e.key,e.keyCode)
+                  console.log(e.target.value)
+                }
+              },
+            })
+          </script>
+        </body>
+      </html>
+      ```
+    
     - 在监听**键盘事件**时，外面经常需要**判断详细的按键**。此时，可以为**键盘相关的事件**添加**按键修饰符**，例如：
-
+    
     - ```html
               <!-- 只有在'key'是'Esc'的时候调用'vm.clearInput()'' -->
               <input type="text" @keyup.esc="clearInput">
@@ -423,6 +550,23 @@
 
     
 
+  - 收集表单数据
+
+    - 若`<input type="text"/>`,则`v-model`收集的是`value`值，用户输入的内容就是`value`值
+
+    - 若`<input type="radio"/>`，则`v-model`收集的是`value`值，且要给标签配置`value`属性
+    
+    - 若`<input type="checkbox"/>`
+    
+      - 没有配置`value`属性，那么手机的是`checked`属性（勾选or未勾选，是布尔值）
+
+      - 配置了`value`属性
+    
+        - `v-model`的初始值是非数组，那么手机的就是`checked`（勾选or未勾选，是布尔值）
+        - `v-model`的初始值是数组，那么手机的就是`value`组成的数组
+    
+        
+    
   - v-model指令的修饰符
 
     - 为了**方便对用户输入的内容进行处理**，vue对v-model指令提供了3个修饰符，分别是：
@@ -528,8 +672,6 @@
 
     - 注意：v-else指令**必须配合**v-if指令一起使用，否则他将不会被识别
 
-    - d
-
   - v-else-if
 
     - v-else-if指令充当v-if的"else-if"块，可以连续使用
@@ -543,7 +685,95 @@
 
     - 注意：v-else-if指令**必须配合**v-if指令一起使用，否则他将不会被识别
 
+    
+    
+  - 绑定样式
+
+    - class样式
+
+      - 写法： `:class="xxx"`，xxx可以是字符串、数组、对象
+      - `:style=[a,b]`,其中a、b是样式对象
+      - `:style="{fontSize: xxx}"`，其中xxx是动态值
+
+    - 注意：
+
+      - 字符串写法适用于：类名不确定，要动态获取
+      - 数组写法适用于：要绑定多个样式，个数不确定，名字也不确定
+      - 对象写法适用于：要绑定多个样式，个数确定，名字也确定，但不确定用不用
+
+    - ```html
+      <style>
+        .basic {width: 300px;height: 50px;border: 1px solid black;}
+        .happy {border: 3px solid red;background-color: rgba(255, 255, 0, 0.644);
+          background: linear-gradient(30deg, yellow, pink, orange, yellow);}
+        .sad {border: 4px dashed rgb(2, 197, 2);background-color: skyblue;}
+        .normal {background-color: #bfa;}
+        .atguigu1 {background-color: yellowgreen;}
+        .atguigu2 {font-size: 20px;text-shadow: 2px 2px 10px red;}
+        .atguigu3 {border-radius: 20px;}
+      </style>
       
+      <div id="root">
+        <!-- 绑定class样式--字符串写法，适用于：样式的类名不确定，需要动态指定 -->
+        <div class="basic" :class="mood" @click="changeMood">{{name}}</div><br/><br/>
+      
+        <!-- 绑定class样式--数组写法，适用于：要绑定的样式个数不确定、名字也不确定 -->
+        <div class="basic" :class="classArr">{{name}}</div><br/><br/>
+      
+        <!-- 绑定class样式--对象写法，适用于：要绑定的样式个数确定、名字也确定，但要动态决定用不用 -->
+        <div class="basic" :class="classObj">{{name}}</div><br/><br/>
+      
+        <!-- 绑定style样式--对象写法 -->
+        <div class="basic" :style="styleObj">{{name}}</div><br/><br/>
+      
+        <!-- 绑定style样式--数组写法 -->
+        <div class="basic" :style="styleArr">{{name}}</div>
+      </div>
+      
+      <script type="text/javascript">
+        Vue.config.productionTip = false
+      
+        const vm = new Vue({
+          el: '#root',
+          data: {
+            name: '尚硅谷',
+            mood: 'normal',
+            classArr: ['atguigu1', 'atguigu2', 'atguigu3'],
+            classObj: {
+              atguigu1: false,
+              atguigu2: false,
+            },
+            styleObj: {
+              fontSize: '40px',
+              color: 'red',
+            },
+            styleObj2: {
+              backgroundColor: 'orange'
+            },
+            styleArr: [
+              {
+                fontSize: '40px',
+                color: 'blue',
+              },
+              {
+                backgroundColor: 'gray'
+              }
+            ]
+          },
+          methods: {
+            changeMood() {
+              const arr = ['happy', 'sad', 'normal']
+              const index = Math.floor(Math.random() * 3)
+              this.mood = arr[index]
+            }
+          },
+        })
+      </script>
+      ```
+
+      
+
+    
 
 - 列表渲染指令
 
@@ -621,10 +851,333 @@
       - 建议把**数据项id属性的值**作为key的值（因为id属性的值具有唯一性）
       - 使用**index的值**当作key的值**没有任何意义**（因为index的值不具有唯一性）
       - 建议使用v-for指令时**一定要指定key的值**（既提升性能，又防止列表状态紊乱）
+      
+    - key的作用和原理
+    
+      - ![](https://cdn.nlark.com/yuque/0/2022/png/1379492/1643033767087-2558e992-b48b-4b54-a9b8-86eb8534bd98.png)
+    
+        ![img](https://cdn.nlark.com/yuque/0/2022/png/1379492/1643033764359-6a37a493-bb51-4b3b-8b14-822a3df68d6e.png)
+    
+      - key的内部原理
+    
+        - `虚拟DOM`中`key`的作用：**`key`是`虚拟DOM`中对象的标识**，当数据发生变化时，**`Vue`会根据<u>新数据</u>生成<u>新的</u>`虚拟DOM`，随后`Vue`进行新`虚拟DOM`与旧`虚拟DOM`的差异比较**，比较规则如下
+        - 比较规则：
+          - 旧`虚拟DOM`中找到了与新`虚拟DOM`相同的`key`
+            - 若`虚拟DOM`中内容没变，则直接使用之前的`真实DOM`
+            - 若`虚拟DOM`中内容变了，则生成新的`虚拟DOM`，随后替换掉页面中之前的`真实DOM`
+          - 旧`虚拟DOM`中未找到与新`虚拟DOM`相同的`key`
+            - 创建新的`真实DOM`，随后渲染到页面
+        - 用`index`作为`key`可能会引发的问题
+          - 若对数据进行逆序添加、逆序删除等**破坏顺序的操作**，会产生没有必要的`真实DOM`更新 --->界面效果没有问题，但是效率低
+          - 若结构中还包含**输入类的`DOM`**：会产生错误`DOM`更新 ---> 界面有问题
+        - 开发中如何选择`key`
+          - 最好使用每条数据的**唯一标识作为`key`**，比如id、手机号、身份证号、学号等唯一值
+          - 如果不存在对数据的逆序添加、逆序删除等破坏顺序的操作，仅用于渲染列表，使用`index`作为`key`也是没有问题的
+    
+  - 列表过滤
+  
+    - ![image.png](https://cdn.nlark.com/yuque/0/2022/png/1379492/1643209841363-2dbb95a7-f003-4da1-b456-9a5232f3cf90.png)
+  
+    - 即如上图，再输入框中输入关键字，下方列表出现具有关键字的数据
+  
+    - ```html
+      <title>列表过滤</title>
+      <script type="text/javascript" src="../js/vue.js"></script>
+      
+      <div id="root">
+        <h2>人员列表</h2>
+        <input type="text" placeholder="请输入名字" v-model="keyWord">
+        <ul>
+          <li v-for="(p,index) of filPersons" :key="p.id">
+            {{ p.name }}-{{ p.age }}-{{ p.sex }}
+          </li>
+        </ul>
+      </div>
+      
+      <script type="text/javascript">
+        Vue.config.productionTip = false
+        // 用 watch 实现
+        // #region 
+        /* new Vue({
+      			el: '#root',
+      			data: {
+      				keyWord: '',
+      				persons: [
+      					{ id: '001', name: '马冬梅', age: 19, sex: '女' },
+      					{ id: '002', name: '周冬雨', age: 20, sex: '女' },
+      					{ id: '003', name: '周杰伦', age: 21, sex: '男' },
+      					{ id: '004', name: '温兆伦', age: 22, sex: '男' }
+      				],
+      				filPersons: []
+      			},
+      			watch: {
+      				keyWord: {
+      					immediate: true,
+      					handler(val) {
+      						this.filPersons = this.persons.filter((p) => {
+      							return p.name.indexOf(val) !== -1
+      						})
+      					}
+      				}
+      			}
+      		}) */
+        //#endregion
+      
+        // 用 computed 实现
+        new Vue({
+          el: '#root',
+          data: {
+            keyWord: '',
+            persons: [
+              { id: '001', name: '马冬梅', age: 19, sex: '女' },
+              { id: '002', name: '周冬雨', age: 20, sex: '女' },
+              { id: '003', name: '周杰伦', age: 21, sex: '男' },
+              { id: '004', name: '温兆伦', age: 22, sex: '男' }
+            ]
+          },
+          computed: {
+            filPersons() {
+              return this.persons.filter((p) => {
+                return p.name.indexOf(this.keyWord) !== -1
+              })
+            }
+          }
+        }) 
+      </script>
+      ```
+  
+  - 列表排序
+  
+    - ![image.png](https://cdn.nlark.com/yuque/0/2022/png/1379492/1643211061137-37aec6e3-9594-434d-b2d9-d31f752992e1.png)
+  
+    - 如上图，在输入框中输入关键词后，点击按钮，会按照年龄响应排序
+  
+    - ```html
+      <title>列表排序</title>
+      <script type="text/javascript" src="../js/vue.js"></script>
+      
+      <div id="root">
+        <h2>人员列表</h2>
+        <input type="text" placeholder="请输入名字" v-model="keyWord">
+        <button @click="sortType = 2">年龄升序</button>
+        <button @click="sortType = 1">年龄降序</button>
+        <button @click="sortType = 0">原顺序</button>
+        <ul>
+          <li v-for="(p,index) of filPersons" :key="p.id">
+            {{p.name}}-{{p.age}}-{{p.sex}}
+            <input type="text">
+          </li>
+        </ul>
+      </div>
+      
+      <script type="text/javascript">
+        Vue.config.productionTip = false
+        new Vue({
+          el: '#root',
+          data: {
+            keyWord: '',
+            sortType: 0, // 0原顺序 1降序 2升序
+            persons: [
+              { id: '001', name: '马冬梅', age: 30, sex: '女' },
+              { id: '002', name: '周冬雨', age: 31, sex: '女' },
+              { id: '003', name: '周杰伦', age: 18, sex: '男' },
+              { id: '004', name: '温兆伦', age: 19, sex: '男' }
+            ]
+          },
+          computed: {
+            filPersons() {
+              const arr = this.persons.filter((p) => {
+                return p.name.indexOf(this.keyWord) !== -1
+              })
+              //判断一下是否需要排序
+              if (this.sortType) {
+                arr.sort((p1, p2) => {
+                  return this.sortType === 1 ? p2.age - p1.age : p1.age - p2.age
+                })
+              }
+              return arr
+            }
+          }
+        })
+      </script>
+      ```
+  
+- v-cloak指令
+
+  - 本质是一个特殊属性，`Vue`实例创建完毕并接管容器后，会删掉`v-cloak`属性
+
+  - 使用`css`配合`v-cloak`可以解决网速慢时页面展示出{{ xxx }}的问题
+
+  - ```html
+    <title>v-cloak指令</title>
+    
+    <style>
+      [v-cloak] {
+        display:none;
+      }
+    </style>
+    
+    <div id="root">
+      <h2 v-cloak>{{ name }}</h2>
+    </div>
+    
+    // 够延迟5秒收到vue.js
+    <script type="text/javascript" src="http://localhost:8080/resource/5s/vue.js"></script>
+    
+    <script type="text/javascript">
+      console.log(1)
+      Vue.config.productionTip = false
+      new Vue({
+        el:'#root',
+        data:{name:'cess'}
+      })
+    </script>
+    ```
+
+- v-once指令
+
+  - `v-once`所在节点在初次动态渲染后，就视为静态内容了
+
+  - 以后数据的改变不会引起`v-once`所在结构的更新，可以用于优化性能
+
+  - ```html
+    <title>v-once指令</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+    
+    <div id="root">
+      <h2 v-once>初始化的n值是: {{n}}</h2>
+      <h2>当前的n值是: {{n}}</h2>
+      <button @click="n++">点我n+1</button>
+    </div>
+    
+    <script type="text/javascript">
+      Vue.config.productionTip = false
+      new Vue({ el: '#root', data: {n:1} })
+    </script>
+    ```
+
+- v-pre指令
+
+  - 跳过`v-pre`所在节点的编译过程
+
+  - 可利用它跳过：没有使用指令语法、没有使用插值语法的节点，会加快编译
+
+  - ```html
+    <title>v-pre指令</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+    
+    <div id="root">
+      <h2 v-pre>Vue其实很简单</h2>
+      <h2 >当前的n值是:{{n}}</h2>
+      <button @click="n++">点我n+1</button>
+    </div>
+    
+    <script type="text/javascript">
+      Vue.config.productionTip = false
+      new Vue({ el:'#root', data:{n:1} })
+    </script>
+    ```
+
+    
 
 
 
+##### Vue数据监视
 
+- 数据更新时的一个问题
+
+  - this.persons[0] = {id:'001',name:'马老师',age:50,sex:'男'}更改`data`数据时，`Vue`不监听，模板不改变
+
+  - ```html
+    <title>更新时的一个问题</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+    
+    <div id="root">
+      <h2>人员列表</h2>
+      <button @click="updateMei">更新马冬梅的信息</button>
+      <ul>
+        <li v-for="(p,index) of persons" :key="p.id">
+          {{p.name}}-{{p.age}}-{{p.sex}}
+        </li>
+      </ul>
+    </div>
+    
+    <script type="text/javascript">
+      Vue.config.productionTip = false
+    
+      const vm = new Vue({
+        el: '#root',
+        data: {
+          persons: [
+            { id: '001', name: '马冬梅', age: 30, sex: '女' },
+            { id: '002', name: '周冬雨', age: 31, sex: '女' },
+            { id: '003', name: '周杰伦', age: 18, sex: '男' },
+            { id: '004', name: '温兆伦', age: 19, sex: '男' }
+          ]
+        },
+        methods: {
+          updateMei() {
+            // this.persons[0].name = '马老师'	//奏效
+            // this.persons[0].age = 50				//奏效
+            // this.persons[0].sex = '男'			//奏效
+            // this.persons[0] = {id:'001',name:'马老师',age:50,sex:'男'} //不奏效
+            this.persons.splice(0, 1, { id: '001', name: '马老师', age: 50, sex: '男' })
+          }
+        }
+      })
+    </script>
+    ```
+
+- 模拟一个数据监测
+
+  - ```js
+    let data = {
+      name: '尚硅谷',
+      address: '北京',
+    }
+    
+    function Observer(obj) {
+      // 汇总对象中所有的属性形成一个数组
+      const keys = Object.keys(obj)
+      // 遍历
+      keys.forEach((k) => {
+        Object.defineProperty(this, k, {
+          get() {
+            return obj[k]
+          },
+          set(val) {
+            console.log(`${k}被改了，我要去解析模板，生成虚拟DOM.....我要开始忙了`)
+            obj[k] = val
+          }
+        })
+      })
+    }
+    
+    // 创建一个监视的实例对象，用于监视data中属性的变化
+    const obs = new Observer(data)
+    console.log(obs)
+    
+    // 准备一个vm实例对象
+    let vm = {}
+    vm._data = data = obs
+    ```
+
+  - 原理：
+
+    - `vue`会监视`data`中所有层次的数据
+    - 如何监测**对象**中的数据
+      - 通过`setter`实现监视，且要在`new Vue()`时旧传入要检测的数据
+      - 对象创建后追加的属性，Vue不做响应式处理
+      - 如需给后添加的属性左响应式，请使用如下API
+        - **Vue.set(target,propetyName/index,value)**
+        - **vm.$set(target,propetyName/index,value)**
+    - 如何监测**数组**中的数据
+      - 通过包裹数组更新元素的方法实现，本质就是做了两件事
+        - 调用原生对应的方法对数组进行更新
+        - 重新解析模板，进而更新页面
+      - 在`Vue`修改数组中的某个元素一定要用如下方法
+        - **`push()` `pop()` `unshift()` `splice()` `sort()` `reverse()`** 这几个方法被`Vue`重写了**`Vue.set()`或`vm.$set()`**
+      - 特别注意：**`Vue.set()`和`vm.$set()`不能给`vm`或`vm的根数据对象`（data等）添加属性**
 
 
 

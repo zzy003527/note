@@ -263,7 +263,10 @@
       git log --pretty=oneline
       
       # 使用git reset --hard命令，根据指定的提交ID 回退到指定版本
-      git reset --hand<CommitID>
+      git reset --hard 版本ID                                //版本ID可通过git reflog查询
+      或者
+      git reset --hard HEAD^                //回退到上一个版本
+      git reset --hard HEAD~100           //回退到100个前的版本
       
       # 在旧版本中使用git reflog --pretty=oneline命令，查看命令操作的历史
       git reflog --pretty=oneline
@@ -271,9 +274,19 @@
       # 再次根据最新的提交ID，跳转到最新的版本
       git reset --hard<CommitID>
       ```
-
+  
+  - 撤销修改
+  
+    - ```git
+      git checkout --file                     (file是文件名)
+      ```
+    
+    - 就是让这个文件回到最近一次`git commit`或`git add`时的状态。
+    
+    - 用命令`git reset HEAD <file>`可以把暂存区的（用了git add后）修改撤销掉（unstage），重新放回工作区（<file>是文件名）
+    
   - 小结
-
+  
     - 初始化Git仓库的命令：**git init**
     - 查看文件状态的命令：**git status 或 git status -s**
     - 一次性将文件加入暂存区的命令：**git add .** 
@@ -392,15 +405,30 @@
 
     - ![QQ图片20220203145000](C:\Users\ZZY\Desktop\study\markdown插图\QQ图片20220203145000.png)
 
+  - 删除远程仓库
+
+    - 如果添加的时候地址写错了，或者就是想删除远程库，可以用`git remote rm <name>`命令。（<name>为仓库名，如：origin）
+    - 使用前，建议先用`git remote -v`查看远程库信息
+    
+  - 小结
+  
+    - 要关联一个远程库，使用命令`git remote add origin git@server-name:path/repo-name.git`；
+  
+      关联一个远程库时必须给远程库指定一个名字，`origin`是默认习惯命名；
+    
+    - 关联后，使用命令`git push -u origin master`第一次推送master分支的所有内容；
+  
+    - 此后，每次本地提交后，只要有必要，就可以使用命令`git push origin master`推送最新修改；
+    
   - 将远程仓库克隆到本地
-
+  
     - 打开Git Bash，输入如下的命令并回车执行：
-
+  
       ```git
       git clone 远程仓库的地址
       ```
-
-    - 远程仓库的地址在仓库页面右上角（克隆处）
+  
+    - 远程仓库的地址在仓库页面右上角Code里面（克隆处）
 
 
 
@@ -453,10 +481,24 @@
       git checkout login
       ```
 
+  - 或者使用switch来切换分支
+
+    - 创建并切换到新的`dev`分支，可以使用：
+
+      ```
+      git switch -c dev
+      ```
+  
+    - 直接切换到已有的`master`分支，可以使用：
+  
+      ```
+      $ git switch master
+      ```
+  
   - 分支的快速创建和切换
-
+  
     - 使用如下的命令，可以**创建指定名称的新分支**，并**立即切换到新分支**上：
-
+  
       ```git
       # -b表示创建一个新分支
       # checkout表示切换到刚才新建的分支上
@@ -477,16 +519,18 @@
       ```
 
     - 合并分支时的注意点：假设要把C分支的代码合并到A分支，则**必须先切换到A分支上，再运行git merge 命令**来合并C分支
-
+  
   - 删除分支
-
+  
     - 当把功能分支的代码合并到master主分支上以后，就可以使用如下的命令，删除对应的功能分支：
-
+  
       ```git
       git branch -d 分支名称
       ```
 
   - 遇到冲突时的分支合并
+
+    - 用`git log --graph`命令可以看到分支合并图。
 
     - 如果**在两个不同的分支中**，对**同一个文件**进行了**不同的修改**，Git就没法干净的合并它们。此时，我们需要打开这些包含冲突 的文件然后**手动解决冲突**
 
@@ -499,13 +543,104 @@
       git add . 
       git commit -m "解决了分支合并冲突的问题"
       ```
-
+  
+  - 分支管理操作
+  
+    - 通常，合并分支时，如果可能，Git会用`Fast forward`模式，但这种模式下，删除分支后，会丢掉分支信息。
+  
+    - 如果要强制禁用`Fast forward`模式，Git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息。
     
+    - 如何禁用？
+    
+      在`git merge`时加上`--no-ff`,即如`git merge --no-ff -m '要添加的消息' kk`
+    
+    - 合并分支时，加上`--no-ff`参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而`fast forward`合并就看不出来曾经做过合并。
+    
+    
+    
+  - Bug分支
+  
+    - 在开发过程中，当前任务还未完成，但需要修改bug，此时需要创建新分支，即Bug分支解决bug
+  
+    - Git还提供了一个`stash`功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作：
+  
+      ```
+      git stash
+      
+      //现在，用git status查看工作区，就是干净的（除非有没有被Git管理的文件），因此可以放心地创建分支来修复bug。
+      ```
+  
+    - 首先确定要在哪个分支上修复bug，假定需要在`master`分支上修复，就从`master`创建临时分支：
+  
+      ```
+      git checkout master
+      git checkout -b bug1
+      ```
+  
+    - 创建之后修复bug，修改后提交
+  
+    - ```
+      git add .
+      git commit -m "fix bug1"  bug1
+      ```
 
+    - 修复完成后，切换到`master`分支，并完成合并，最后删除`bug1`分支：
+  
+    - ```
+      git switch master
+      git merge --no-ff -m "merged bug fix1" bug1
+      ```
+
+    - 然后回到dev
+
+    - ```
+      git switch dev
+      git status        //此时是空的
+      ```
+  
+    - 用`git stash list`命令看看原来dev的工作环境保存到哪里了：
+  
+      ```
+      $ git stash list
+      stash@{0}: WIP on dev: f52c633 add merge
+      ```
+  
+    - 需要恢复一下，有两个办法：
+  
+      一是用`git stash apply`恢复，但是恢复后，stash内容(list中)并不删除，你需要用`git stash drop`来删除；
+  
+      另一种方式是用`git stash pop`，恢复的同时把stash内容（list中）也删了：
+  
+      
+  
+    - 如果dev分支和master分支有一样的bug，且master改好了
+  
+    - 在master分支上修复的bug，想要合并到当前dev分支，可以用`git cherry-pick <commit>`命令，把bug提交的修改“复制”到当前分支，避免重复劳动
+  
+    - <commit>指的是bug分支的名字
+  
+    
+  
+  - Feature分支
+  
+    - 添加一个新功能时，你肯定不希望因为一些实验性质的代码，把主分支搞乱了，所以，每添加一个新功能，最好新建一个feature分支，在上面开发，完成后，合并，最后，删除该feature分支。
+  
+    - 准备开发：
+  
+      ```
+      git switch -c feature-vulcan
+      ```
+  
+    - 开发新功能完毕，在`git add`和`git commit`之后切回dev分支，`git merge feature-vulcan` ，然后删除分支`git branch -d dev`
+  
+    - 如果新功能不要了，不用合并了，但是用`-d`删除不了，就要把`-d`换成`-D`强制删除,如：` git branch -D feature-vulcan`
+  
+      
+  
   - **远程分支操作**
-
+  
     - 如果是**第一次**将本地分支推送到远程仓库，需要运行如下的命令：
-
+  
       ```git
       # -u 表示把本地分支和远程分支进行关联，只在第一次推送的时候需要待 -u参数
       git push -u 远程仓库的别名 本地分支名称：远程分支名称
@@ -516,21 +651,21 @@
       # 如果希望远程分支的名称和本地分支的名称保持一致，可以对命令进行简化：
       git push -u origin payment
       ```
-
+  
     - 注意：第一次推送分支需要带 **-u参数**，此后可以直接使用 **git push**推送代码到远程分支
-
+  
   - 查看远程仓库中所有的分支列表
-
+  
     - 通过如下的命令，可以查看远程仓库中所有的分支列表的信息：
-
+  
       ```git
       git remote show 远程仓库名称
       ```
-
+  
   - 跟踪分支
-
+  
     - 跟踪分支指的是：从远程仓库中，把远程分支下载到本地仓库中。需要运行的命令如下：
-
+  
     - ```git
       # 从远程仓库中，把对应的远程分支下载到本地仓库，保持本地分支和远程分支名称相同
       git checkout 远程分支的名称
@@ -542,31 +677,66 @@
       # 示例：
       git checkout -b payment origin/pay
       ```
-
-  - 拉去远程分支的最新的代码
-
+  
+  - 拉取远程分支的最新的代码
+  
     - 可以使用如下的命令，把远程分支最新的代码下载到本地对应的分支中：
-
+  
       ```git
-      # 从远程仓库，拉去当前分支最新的代码，保持当前分支的代码和远程分支代码一致
+      # 从远程仓库，拉取当前分支最新的代码，保持当前分支的代码和远程分支代码一致
       git pull 
       ```
-
+  
   - 删除远程分支
-
+  
     - 可以使用如下的命令，删除远程仓库中指定的分支：
-
+  
       ```git
       # 删除远程仓库中，指定名称的远程分支
       git push 远程仓库名称 --delete 远程分支名称
       # 示例：
       git push origin --delete pay
       ```
-
+  
     
-
+  
+  - 多人协作过程：
+  
+    - 首先，可以试图用`git push origin <branch-name>`推送自己的修改
+    
+    - 如果推送失败，则因为远程分支比你的本地更新，需要先用`git pull`试图合并
+    
+      - 如果`git pull`失败，则指定本地dev与远程origin/dev分支的链接，即`git branch --set-upstream-to=origin/dev dev` ，然后再`git pull`
+    
+    - 如果合并有冲突，则解决冲突，并在本地提交
+    
+    - 没有冲突或者解决掉冲突后，再用`git push origin <branch-name>`推送就能成功
+    
+    - 小结：
+    
+      - 查看远程库信息，使用`git remote -v`；
+      - 本地新建的分支如果不推送到远程，对其他人就是不可见的；
+      - 从本地推送分支，使用`git push origin branch-name`，如果推送失败，先用`git pull`抓取远程的新提交；
+      - 在本地创建和远程分支对应的分支，使用`git checkout -b branch-name origin/branch-name`，本地和远程分支的名称最好一致；
+      - 建立本地分支和远程分支的关联，使用`git branch --set-upstream branch-name origin/branch-name`；
+      - 从远程抓取分支，使用`git pull`，如果有冲突，要先处理冲突。
+    
+      
+    
   - 总结：
-
+  
+    - 查看分支：`git branch`
+    
+      创建分支：`git branch <name>`
+    
+      切换分支：`git checkout <name>`或者`git switch <name>`
+    
+      创建+切换分支：`git checkout -b <name>`或者`git switch -c <name>`
+    
+      合并某分支到当前分支：`git merge <name>`
+    
+      删除分支：`git branch -d <name>`
+    
     - 能够掌握Git中基本命令的使用
       - git init
       - git add .
@@ -580,3 +750,27 @@
       - git push -u origin 新分支名称
       - git checkout 分支名称
       - git branch
+  
+  
+  
+  
+  
+- 标签管理
+
+  - 创建标签
+
+    - 命令`git tag <tagname>`用于新建一个标签，默认为`HEAD`，也可以指定一个commit id；
+    - 命令`git tag -a <tagname> -m "blablabla..."`可以指定标签信息；
+    - 命令`git tag`可以查看所有标签。
+
+  - 操作标签
+
+    - 命令`git push origin <tagname>`可以推送一个本地标签；
+    - 命令`git push origin --tags`可以推送全部未推送过的本地标签；
+    - 命令`git tag -d <tagname>`可以删除一个本地标签；
+    - 命令`git push origin :refs/tags/<tagname>`可以删除一个远程标签。
+
+    
+
+
+

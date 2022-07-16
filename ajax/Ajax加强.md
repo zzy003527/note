@@ -49,7 +49,7 @@
     - 使用xhr对象发起带参数的GET请求时，只需在调用xhr.open期间，为URL地址指定参数即可：
 
       ```js
-      xhr.open('GET','http://www.liulongin.top:3006/api/getbooks?id=1')
+      xhr.open('GET','http://www.liulongbin.top:3006/api/getbooks?id=1')
       ```
 
     - ?xx=xx这种在URL地址后面拼接的参数，叫做**查询字符串**

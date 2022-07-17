@@ -72,11 +72,11 @@
 
   - ![image.png](https://cdn.nlark.com/yuque/0/2022/png/1379492/1643983901187-53fc6663-8195-463f-99b0-69c406fd5a66.png)
 
-  - Vuex的基本使用
+  - **<u>Vuex的基本使用</u>**
 
     - 初始化数据`state`，配置`actions`、`mutations`，操作文件`store.js`
-    - 组件中读取`vuex`中的数据`$store.state.数据`
-    - 组件中修改`vuex`中的数据`$store.dispatch('action中的方法名',数据)`或$store.commit('mutations中的方法名',数据)
+    - 组件中读取`vuex`中的数据**`$store.state.数据`**
+    - 组件中修改`vuex`中的数据**`$store.dispatch('action中的方法名',数据)`或`$store.commit('mutations中的方法名',数据)`**
     - 若没有网络请求或其他业务逻辑，组件中也可越过`actions`，即不写`dispatch`，直接编写`commit`
 
   - `src/store/index.js`该文件用于创建Vuex中最核心的store
@@ -181,15 +181,130 @@
       
       ```
 
-  - 
+    
+
+- getters配置项
+
+  - 概念：当`state`中的数据需要经过加工后再使用时，可以使用`getters`加工，相当于**全局计算属性**
+
+  - 在`store.js`中追加`getters`配置
+
+    ```js
+    const getters = {
+    	bigSum(state){
+    		return state.sum * 10
+    	}
+    }
+    
+    // 创建并暴露store
+    export default new Vuex.Store({
+    	......
+    	getters
+    })
+    ```
+
+  - 组件中读取数据`$store.getters.bigSum`
+
+    ![image.png](https://cdn.nlark.com/yuque/0/2022/png/1379492/1644051052492-7080e13e-ce76-45d2-9f05-9a5585018837.png)
+
+    ```js
+    //         src/store/index.js
+    
+    import Vue from 'vue'	// 引入Vue核心库
+    import Vuex from 'vuex'	// 引入Vuex
+    
+    Vue.use(Vuex)	// 应用Vuex插件
+       
+    // 准备actions对象——响应组件中用户的动作
+    const actions = {
+        addOdd(context,value){
+            console.log("actions中的addOdd被调用了")
+            if(context.state.sum % 2){context.commit('ADD',value)}
+        },
+        addWait(context,value){
+            console.log("actions中的addWait被调用了")
+            setTimeout(()=>{context.commit('ADD',value)},500)
+        },
+    }
+    // 准备mutations对象——修改state中的数据
+    const mutations = {
+        ADD(state,value){state.sum += value},
+        SUB(state,value){state.sum -= value}
+    }
+    // 准备state对象——保存具体的数据
+    const state = {
+        sum:0 // 当前的和
+    }
+    // 准备getters对象——用于将state中的数据进行加工
+    const getters = {
+        bigSum(){
+            return state.sum * 10
+        }
+    }
+       
+    //创建并暴露store
+    export default new Vuex.Store({
+        actions,
+        mutations,
+        state,
+        getters
+    })
+    ```
+
+  - ```vue
+    //            src/Count.vue
+    
+    <template>
+    	<div>
+    		<h1>当前求和为：{{ $store.state.sum }}</h1>
+    		<h3>当前求和的10倍为：{{ $store.getters.bigSum }}</h3>
+    		<select v-model.number="n">
+    			<option value="1">1</option>
+    			<option value="2">2</option>
+    			<option value="3">3</option>
+    		</select>
+    		<button @click="increment">+</button>
+    		<button @click="decrement">-</button>
+    		<button @click="incrementOdd">当前求和为奇数再加</button>
+    		<button @click="incrementWait">等一等再加</button>
+    	</div>
+    </template>
+    
+    <script>
+    	export default {
+    		name:'Count',
+    		data() {
+    			return {
+    				n:1,
+    			}
+    		},
+    		methods: {
+    			increment(){this.$store.commit('ADD',this.n)},
+    			decrement(){this.$store.commit('SUBTRACT',this.n)},
+    			incrementOdd(){this.$store.dispatch('addOdd',this.n)},
+    			incrementWait(){this.$store.dispatch('addWait',this.n)},
+    		},
+    	}
+    </script>
+    
+    <style>button{margin-left: 5px;}</style>
+    ```
+
+    
+
+- 四个map方法的使用
 
   - 
-
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
   - d
-
-- 
-
-- 
 
 - 
 

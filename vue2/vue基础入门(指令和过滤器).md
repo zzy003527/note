@@ -85,7 +85,7 @@
       - 对象式： data:{}
       - 函数式： data() { return{} }
 
-    - 到了组件是，data必须使用函数式
+    - 到了组件时，data必须使用函数式
 
     - 由vue管理的函数，一定不要写箭头函数，否则this就不再是vue实例了
 
@@ -429,6 +429,21 @@
           </div>
       ```
   
+  - `.exact`修饰符
+  
+    - `.exact` 修饰符允许你控制由精确的系统修饰符组合触发的事件。
+  
+    - ```html
+      <!-- 即使 Alt 或 Shift 被一同按下时也会触发 -->
+      <button @click.ctrl="onClick">A</button>
+      
+      <!-- 有且只有 Ctrl 被按下的时候才触发 -->
+      <button @click.ctrl.exact="onCtrlClick">A</button>
+      
+      <!-- 没有任何系统修饰符被按下的时候才触发 -->
+      <button @click.exact="onClick">A</button>
+      ```
+    
   - 按键修饰符
   
     - VUE中常见的按键别名
@@ -552,18 +567,18 @@
 
   - 收集表单数据
 
-    - 若`<input type="text"/>`,则`v-model`收集的是`value`值，用户输入的内容就是`value`值
+    - 若`<input type="text"/>`（文本）,则`v-model`收集的是`value`值，用户输入的内容就是`value`值
 
-    - 若`<input type="radio"/>`，则`v-model`收集的是`value`值，且要给标签配置`value`属性
+    - 若`<input type="radio"/>`(单选），则`v-model`收集的是`value`值，且要给标签配置`value`属性
     
-    - 若`<input type="checkbox"/>`
+    - 若`<input type="checkbox"/>`（多选）
     
-      - 没有配置`value`属性，那么手机的是`checked`属性（勾选or未勾选，是布尔值）
+      - 没有配置`value`属性，那么收集的是`checked`属性（勾选or未勾选，是布尔值）
 
       - 配置了`value`属性
     
-        - `v-model`的初始值是非数组，那么手机的就是`checked`（勾选or未勾选，是布尔值）
-        - `v-model`的初始值是数组，那么手机的就是`value`组成的数组
+        - `v-model`的初始值是非数组，那么收集的就是`checked`（勾选or未勾选，是布尔值）
+        - `v-model`的初始值是数组，那么收集的就是`value`组成的数组
     
         
     
@@ -686,6 +701,38 @@
     - 注意：v-else-if指令**必须配合**v-if指令一起使用，否则他将不会被识别
 
     
+    
+  - 动态参数
+
+    - 也可以在指令参数中使用 JavaScript 表达式，方法是用方括号括起来：
+
+      ```html
+      <!-- 注意，参数表达式的写法存在一些约束，如之后的“对动态参数表达式的约束”章节所述。 -->
+      <a v-bind:[attributeName]="url"> ... </a>
+      ```
+    
+    - 这里的 `attributeName` 会被作为一个 JavaScript 表达式进行动态求值，求得的值将会作为最终的参数来使用。例如，如果组件实例有一个 data property `attributeName`，其值为 `"href"`，那么这个绑定将等价于 `v-bind:href`。
+    
+    - 同样地，可以使用动态参数为一个动态的事件名绑定处理函数：
+    
+      ```html
+      <a v-on:[eventName]="doSomething"> ... </a>
+      
+      <-- 在这个示例中，当 eventName 的值为 "focus" 时，v-on:[eventName] 将等价于 v-on:focus -->
+      ```
+    
+    - **对动态参数值约定**：动态参数预期会求出一个字符串，`null` 例外。
+    
+      这个特殊的 `null` 值可以用于显式地移除绑定。任何其它非字符串类型的值都将会触发一个警告。
+    
+    - **对动态参数表达式约定**：动态参数表达式有一些语法约束，因为某些字符，如**空格和引号，放在[ ]里是无效的**。例如：
+    
+      ```html
+      <!-- 这会触发一个编译警告 -->
+      <a v-bind:['foo' + bar]="value"> ... </a>
+      ```
+    
+      
     
   - 绑定样式
 
@@ -873,6 +920,47 @@
         - 开发中如何选择`key`
           - 最好使用每条数据的**唯一标识作为`key`**，比如id、手机号、身份证号、学号等唯一值
           - 如果不存在对数据的逆序添加、逆序删除等破坏顺序的操作，仅用于渲染列表，使用`index`作为`key`也是没有问题的
+    
+  - `v-for`也可以遍历一个对象
+  
+    - 如：
+  
+      ```js
+      <ul id="v-for-object" class="demo">
+        <li v-for="value in myObject">
+          {{ value }}
+        </li>
+      </ul>
+      
+      
+      Vue.createApp({
+        data() {
+          return {
+            myObject: {
+              title: 'How to do lists in Vue',
+              author: 'Jane Doe',
+              publishedAt: '2016-04-10'
+            }
+          }
+        }
+      }).mount('#v-for-object')
+      
+      // 结果是将对象的值（How to do那部分）渲染出来
+      ```
+    
+    - 它可以接收三个参数
+    
+      - ```html
+        <li v-for="(value, name, index) in myObject">
+          {{ index }}. {{ name }}: {{ value }}
+        </li>
+        ```
+    
+      - 第一个参数是值，第二个参数是键名，第三个参数是索引值
+    
+    - 注意： `v-for`  在遍历对象时，会按 `Object.keys()` 的结果遍历，但是不能保证它在不同 JavaScript 引擎下的结果都一致。
+    
+      
     
   - 列表过滤
   

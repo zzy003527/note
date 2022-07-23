@@ -355,9 +355,7 @@
           }
           ```
 
-      - d
-
-    - d
+        
 
   
 
@@ -632,7 +630,32 @@
 
     
 
-- Vue3中的响应式原理
+- 响应式原理
+
+  - 什么是响应式
+
+    - 如：
+
+      ```js
+      let val1 = 2
+      let val2 = 3
+      let sum = val1 + val2
+      
+      console.log(sum) // 5
+      
+      val1 = 3
+      
+      console.log(sum) // 仍然是 5
+      //如果我们更新第一个值，sum 不会被修改
+      ```
+
+    - 如果想要sum值同时被修改，那就需要做到：
+
+      - **当一个值被读取时进行追踪**，例如 `val1 + val2` 会同时读取 `val1` 和 `val2`。
+      - **当某个值改变时进行检测**，例如，当我们赋值 `val1 = 3`。
+      - **重新运行代码来读取原始值**，例如，再次运行 `sum = val1 + val2` 来更新 `sum` 的值。
+
+    - 这就是响应式
 
   - Vue2的响应式
 
@@ -727,7 +750,35 @@
       }
       ```
 
-    - 
+    - 调试computed（Vue3.2+）
+
+      - `computed` 可接受一个带有 `onTrack` 和 `onTrigger` 选项的对象作为第二个参数：
+
+        - `onTrack` 会在某个响应式 property 或 ref 作为依赖被追踪时调用。
+        - `onTrigger` 会在侦听回调被某个依赖的修改触发时调用。
+
+      - 所有回调都会收到一个 debugger 事件，其中包含了一些依赖相关的信息。推荐在这些回调内放置一个 `debugger` 语句以调试依赖。
+
+        ```js
+        const plusOne = computed(() => count.value + 1, {
+          onTrack(e) {
+            // 当 count.value 作为依赖被追踪时触发
+            debugger
+          },
+          onTrigger(e) {
+            // 当 count.value 被修改时触发
+            debugger
+          }
+        })
+        // 访问 plusOne，应该触发 onTrack
+        console.log(plusOne.value)
+        // 修改 count.value，应该触发 onTrigger
+        count.value++
+        ```
+
+      - `onTrack` 和 `onTrigger` 仅在开发模式下生效
+
+        
 
   - watch函数
 
@@ -804,6 +855,57 @@
             console.log('watchEffect配置的回调执行了')
         })
         ```
+        
+      - 停止侦听
+        
+        - 当 `watchEffect` 在组件的 setup()函数或生命周期钩子被调用时，侦听器会被链接到该组件的生命周期，并在组件卸载时自动停止。
+        
+        - 在一些情况下，也可以显式调用返回值以停止侦听：
+        
+          ```js
+          const stop = watchEffect(() => {
+            /* ... */
+          })
+          
+          // later
+          stop()
+          ```
+        
+      - 清除副作用
+        
+        - 有时副作用函数会执行一些异步的副作用，这些响应需要在其失效时清除 (即完成之前状态已改变了) 。所以侦听副作用传入的函数可以接收一个 `onInvalidate` 函数作入参，**用来注册清理失效时的回调**。当以下情况发生时，这个失效回调会被触发：
+        
+          - 副作用即将重新执行时
+        
+          - 侦听器被停止 (如果在 `setup()` 或生命周期钩子函数中使用了 `watchEffect`，则在组件卸载时)
+        
+          - ```js
+            watchEffect(onInvalidate => {
+              const token = performAsyncOperation(id.value)
+              onInvalidate(() => {
+                // id has changed or watcher is stopped.
+                // invalidate previously pending async operation
+                token.cancel()
+              })
+            })
+            ```
+        
+        - 在执行数据请求时，副作用函数往往是一个异步函数：
+        
+          ```js
+          const data = ref(null)
+          watchEffect(async onInvalidate => {
+            onInvalidate(() => {
+              /* ... */
+            }) // 我们在Promise解析之前注册清除函数
+            data.value = await fetchData(props.id)
+          }
+          ```
+        
+      - 副作用函数的刷新时机
+        
+        - Vue 的响应性系统会缓存副作用函数，并异步地刷新它们，这样可以避免同一个“tick” 中多个状态改变导致的不必要的重复调用。
+        - 在核心的具体实现中，组件的 `update` 函数也是一个被侦听的副作用。当一个用户定义的副作用函数进入队列时，默认情况下，会在所有的组件 `update` **前**执行
 
   - 
 
@@ -1147,21 +1249,7 @@
       </script>
       ```
 
-    - 
-
-    - d
-
-  - 
-
-  - 
-
-  - 
-
-  - 
-
-  - 
-
-  - d
+      
 
   
 
@@ -1343,119 +1431,1492 @@
 
     - **移除**过滤器（filter）
 
-- 
+  
+
+- mixin
+
+  - 功能：可以把多个组件**共用的配置**（即Vue实例下面的methods，data等）提取成一个混入对象
+
+  - 使用方式
+
+    - 定义混入
+
+      ```js
+      const mixin = {
+          data() {....},
+          methods: {....}
+          ....
+      }
+      ```
+
+    - 使用混入
+
+      - 全局混入`app.mixin(xxx)`
+
+        - 如：
+
+          ```js
+          const app = Vue.createApp({
+            myOption: 'hello!'
+          })
+          
+          // 为自定义的选项 'myOption' 注入一个处理器。
+          app.mixin({
+            created() {
+              const myOption = this.$options.myOption
+              if (myOption) {
+                console.log(myOption)
+              }
+            }
+          })
+          
+          app.mount('#mixins-global') // => "hello!"
+          ```
+
+      - 局部混入`mixins:['xxx']`
+
+  - 例子：
+
+    ```js
+    // 定义一个 mixin 对象
+    const myMixin = {
+      created() {
+        this.hello()
+      },
+      methods: {
+        hello() {
+          console.log('hello from mixin!')
+        }
+      }
+    }
+    
+    // 定义一个使用此 mixin 对象的应用
+    const app = Vue.createApp({
+      mixins: [myMixin]
+    })
+    
+    app.mount('#mixins-basic') // => "hello from mixin!"
+    ```
+
+  - 选项合并（当组件和 mixin 对象含有同名选项时，这些选项将以恰当的方式进行“合并”。）
+
+    - 每个 mixin 可以拥有自己的 `data` 函数。每个 `data` 函数都会被调用，并将返回结果合并。在数据的 property 发生冲突时，会**以组件自身的数据为优先。**
+
+      ```js
+      const myMixin = {
+        data() {
+          return {
+            message: 'hello',
+            foo: 'abc'
+          }
+        }
+      }
+      
+      const app = Vue.createApp({
+        mixins: [myMixin],
+        data() {
+          return {
+            message: 'goodbye',
+            bar: 'def'
+          }
+        },
+        created() {
+          console.log(this.$data) // => { message: "goodbye", foo: "abc", bar: "def" }
+        }
+      })
+      ```
+
+    - 同名钩子函数将合并为一个数组，因此都将被调用。另外，mixin 对象的钩子将在组件自身钩子**之前**调用。
+
+      ```js
+      const myMixin = {
+        created() {
+          console.log('mixin 对象的钩子被调用')
+        }
+      }
+      
+      const app = Vue.createApp({
+        mixins: [myMixin],
+        created() {
+          console.log('组件钩子被调用')
+        }
+      })
+      
+      // => "mixin 对象的钩子被调用"
+      // => "组件钩子被调用"
+      ```
+
+    - 值为对象的选项，例如 `methods`、`components` 和 `directives`，将被合并为同一个对象。两个对象键名冲突时，**取组件对象的键值对**。
+
+      ```js
+      const myMixin = {
+        methods: {
+          foo() {
+            console.log('foo')
+          },
+          conflicting() {
+            console.log('from mixin')
+          }
+        }
+      }
+      
+      const app = Vue.createApp({
+        mixins: [myMixin],
+        methods: {
+          bar() {
+            console.log('bar')
+          },
+          conflicting() {
+            console.log('from self')
+          }
+        }
+      })
+      
+      const vm = app.mount('#mixins-basic')
+      
+      vm.foo() // => "foo"
+      vm.bar() // => "bar"
+      vm.conflicting() // => "from self"
+      ```
+
+  - 自定义选项合并策略
+
+    - 自定义选项在合并时，默认策略为简单地覆盖已有值。如果想让某个自定义选项以自定义逻辑进行合并，可以在 `app.config.optionMergeStrategies` 中添加一个函数：
+
+      ```js
+      const app = Vue.createApp({
+        custom: 'hello!'
+      })
+      
+      app.config.optionMergeStrategies.custom = (toVal, fromVal) => {
+        console.log(fromVal, toVal)
+        // => "goodbye!", undefined
+        // => "hello", "goodbye!"
+        return fromVal || toVal
+      }
+      
+      app.mixin({
+        custom: 'goodbye!',
+        created() {
+          console.log(this.$options.custom) // => "hello!"
+        }
+      })
+      
+      //在控制台中，先从 mixin 打印 toVal 和 fromVal，然后从 app 打印。如果存在，我们总是返回 fromVal，这就是为什么 this.$options.custom 设置为 hello!。
+      ```
+
+      - 合并策略接收在**父实例和子实例**上定义的该选项的值，**分别作为第一个和第二个参数**。
+
+        
+
+- 自定义指令
+
+  - 什么是自定义指令
+
+    - vue官方提供了v-text、v-for、v-model、v-if等常用的指令。除此之外vue还允许开发者自定义指令
+
+  - 自定义指令的分类
+
+    vue中的自定义指令分为两类，分别是：
+
+    - **私有**自定义指令
+    - **全局**自定义指令
+
+  - 私有自定义指令
+
+    - 在每个vue组件中，可以在directives节点下声明私有自定义指令
+
+    - 如：
+
+      ```js
+      directives: {
+          color: {
+              // 为绑定到的HTML元素设置红色的文字
+              bind(el) {
+                  // 形参中的el是绑定了此指令的、原生的DOM对象
+                  el.style.color = 'red'
+              }
+          }
+      }
+      ```
+
+    - 当指令第一次被绑定到元素上的时候，会立即触发bind函数
+
+    - 形参中的el表示当前指令所绑定到的那个DOM对象
+
+    - 使用binding.value获取指令绑定的值
+
+      - ```js
+        <h1 v-color="color">App根组件</h1>
+            <p v-color="'red'">测试</p>
+        
+        
+        
+         data() {
+            return {
+              color: 'blue'
+            }
+          },
+        directives: {
+            // 定义名为color的指令，指向一个配置对象
+            color: {
+              // 当指令第一次被绑定到元素上的时候，会立即触发bind函数
+              // 形参中的el表示当前指令所绑定到的那个DOM对象
+              bind(el,binding) {
+                el.style.color = binding.value
+              }
+            }
+          }
+        ```
+
+      - binding是bind函数的第二个参数，binding.value获取到的是v-color后面的值（binding只是一个名字，可以改变）
+
+    - inserted函数
+
+      - inserted(element,binding)
+
+      - 指令所在元素被插入页面时调用
+
+      - element是DOM元素，binding是要绑定的对象
+
+    - update函数
+
+      - bind函数**只调用一次**：当指令第一次绑定到元素时调用，**当DOM更新时bind函数不会被触发**
+
+      - update函数会在**每次DOM更新**时被调用
+
+      - 如：
+
+        ```js
+        directives: {
+            color: {
+                //当指令第一次被绑定到元素时被调用
+                bind(el,binding) {
+                    el.style.color = binding.value
+                },
+                //每次DOM更新时被调用
+                update(el,binding) {
+                    el.style.color = binding.value
+                }
+            }
+        }
+        ```
+
+    - 函数简写
+
+      - 如果bind和update函数中的逻辑完全相同，则对象格式的自定义指令可以简写成函数格式：
+
+        ```js
+        directives: {
+            //在bind和update时，会触发相同的业务逻辑
+            color(el,binding) {
+                el.style.color = binding.value
+            }
+        }
+        ```
+
+    ​              或者：
+
+    ```js
+    app.directive('pin', (el, binding) => {
+      el.style.position = 'fixed'
+      const s = binding.arg || 'top'
+      el.style[s] = binding.value + 'px'
+    })
+    ```
+
+    
+
+  - 全局自定义指令
+
+    - 全局共享的自定义指令需要通过"Vue.directive()"进行声明
+
+    - 示例代码：
+
+      ```js
+      const app = Vue.createApp({})
+      //参数1：字符串，表示全局自定义指令的名字
+      //参数2：对象，用来接收指令的参数值
+      app.directive('color',function(el,binding) {
+          el.style.color = binding.value
+      })
+      
+      //或者
+      Vue.directive('color',{
+        bind(el,binding) {
+          el.style.color = binding.value
+        },
+        //每次DOM更新时被调用
+        update(el,binding) {
+          el.style.color = binding.value
+        }
+      })
+      ```
+
+    - 全局自定义指令放到main.js中
+
+  - 钩子函数
+
+    - 一个指令定义对象可以提供如下几个钩子函数 (均为可选)：
+      - `created`：在绑定元素的 attribute 或事件监听器被应用之前调用。在指令需要附加在普通的 `v-on` 事件监听器调用前的事件监听器中时，这很有用。
+      - `beforeMount`：当指令第一次绑定到元素并且在挂载父组件之前调用。
+      - `mounted`：在绑定元素的父组件被挂载后调用。
+      - `beforeUpdate`：在更新包含组件的 VNode 之前调用。
+      - `updated`：在包含组件的 VNode **及其子组件的 VNode** 更新后调用。
+      - `beforeUnmount`：在卸载绑定元素的父组件之前调用
+      - `unmounted`：当指令与元素解除绑定且父组件已卸载时，只调用一次。
+
+  - 对象字面量
+
+    - 如果指令需要多个值，可以传入一个 JavaScript 对象字面量。
+
+    - 指令函数能够接受所有合法的 JavaScript 表达式。
+
+    - ```js
+      <div v-demo="{ color: 'white', text: 'hello!' }"></div>
+      app.directive('demo', (el, binding) => {
+        console.log(binding.value.color) // => "white"
+        console.log(binding.value.text) // => "hello!"
+      })
+      ```
+
+  - 注意：
+
+    - 当在组件中使用时，自定义指令总是会被应用在组件的根节点上
+    - 当被应用在一个多根节点的组件上时，指令会被忽略，并且会抛出一个警告。
+
+
+
+
+
+- 渲染函数
+
+  - DOM树
+
+    - 例子：
+
+      ```html
+      <div>
+        <h1>My title</h1>
+        Some text content
+        <!-- TODO: Add tagline -->
+      </div>
+      ```
+
+      - 当浏览器读到这些代码时，它会建立一个 ”DOM 节点“ 树来保持追踪所有内容，如同你会画一张家谱树来追踪家庭成员的发展一样。
+      - ![DOM Tree Visualization](https://v3.cn.vuejs.org/images/dom-tree.png)
+
+  - 虚拟DOM树
+
+    - Vue 通过建立一个**虚拟 DOM** 来追踪自己要如何改变真实 DOM。
+
+    - 如：
+
+      ```js
+      return h('h1', {}, this.blogTitle)
+      ```
+
+    - `h()` 到底会返回什么呢？
+
+      - 其实不是一个*实际*的 DOM 元素。它更准确的名字可能是 createNodeDescription，因为它所包含的信息会告诉 Vue 页面上需要渲染什么样的节点，及其子节点的描述信息。
+      - 我们把这样的节点描述为“虚拟节点 (virtual node)”，也常简写它为 **VNode**。“虚拟 DOM”是我们对由 Vue 组件树建立起来的整个 VNode 树的称呼。
+
+  - h()参数
+
+    - `h()` 函数是一个用于创建 VNode 的实用程序。
+
+      也可称为 `createVNode()`，但由于频繁使用和简洁，它被称为 `h()` 。
+
+    - 它接受三个参数：
+
+      ```js
+      // @returns {VNode}
+      h(
+        // {String | Object | Function} tag
+        // 一个 HTML 标签名、一个组件、一个异步组件、或
+        // 一个函数式组件。
+        //
+        // 必需的。
+        'div',
+      
+        // {Object} props
+        // 与 attribute、prop 和事件相对应的对象。
+        // 这会在模板中用到。
+        //
+        // 可选的。
+        {},
+      
+        // {String | Array | Object} children
+        // 子 VNodes, 使用 `h()` 构建,
+        // 或使用字符串获取 "文本 VNode" 或者
+        // 有插槽的对象。
+        //
+        // 可选的。
+        [
+          'Some text comes first.',
+          h('h1', 'A headline'),
+          h(MyComponent, {
+            someProp: 'foobar'
+          })
+        ]
+      )
+      ```
+
+      - 如果没有 prop，那么通常可以将 children 作为第二个参数传入。如果会产生歧义，可以将 `null` 作为第二个参数传入，将 children 作为第三个参数传入。
+
+    - 例子：
+
+      ```js
+      const { createApp, h } = Vue
+      
+      const app = createApp({})
+      
+      /** 递归地从子节点获取文本 */
+      function getChildrenTextContent(children) {
+        return children
+          .map(node => {
+            return typeof node.children === 'string'
+              ? node.children
+              : Array.isArray(node.children)
+              ? getChildrenTextContent(node.children)
+              : ''
+          })
+          .join('')
+      }
+      
+      app.component('anchored-heading', {
+        render() {
+          // 从 children 的文本内容中创建短横线分隔 (kebab-case) id。
+          const headingId = getChildrenTextContent(this.$slots.default())
+            .toLowerCase()
+            .replace(/\W+/g, '-') // 用短横线替换非单词字符
+            .replace(/(^-|-$)/g, '') // 删除前后短横线
+      
+          return h('h' + this.level, [
+            h(
+              'a',
+              {
+                name: headingId,
+                href: '#' + headingId
+              },
+              this.$slots.default()
+            )
+          ])
+        },
+        props: {
+          level: {
+            type: Number,
+            required: true
+          }
+        }
+      })
+      ```
+
+  - 约束
+
+    - 组件树中的所有 VNode 必须是唯一的。因此，以下例子是错误的：
+
+      ```js
+      render() {
+        const myParagraphVNode = h('p', 'hi')
+        return h('div', [
+          // 错误 - 重复的 Vnode!
+          myParagraphVNode, myParagraphVNode
+        ])
+      }
+      ```
+
+    - 如果你真的需要重复很多次的元素/组件，你可以使用工厂函数来实现。例如，下面这渲染函数用完全合法的方式渲染了 20 个相同的段落：
+
+      ```js
+      render() {
+        return h('div',
+          Array.from({ length: 20 }).map(() => {
+            return h('p', 'hi')
+          })
+        )
+      }
+      ```
+
+  - 创建组件VNode
+
+    - 要为某个组件创建一个 VNode，传递给 `h` 的第一个参数应该是组件本身。
+
+      ```js
+      render() {
+        return h(ButtonCounter)
+      }
+      ```
+
+    - 如果我们需要通过名称来解析一个组件，那么我们可以调用 `resolveComponent`
+
+      `render` 函数通常只需要对全局注册的组件使用 `resolveComponent`。
+
+      ```js
+      // 此写法可以简化
+      components: {
+        ButtonCounter
+      },
+      render() {
+        return h(resolveComponent('ButtonCounter'))
+      }
+      ```
+
+    - 而对于局部注册的却可以跳过，我们可以直接使用它，而不是通过名称注册一个组件，然后再查找：
+
+      ```js
+      render() {
+        return h(ButtonCounter)
+      }
+      ```
+
+      
+
+  - 使用JavaScript代替模板功能
+
+    - `v-if`和`v-for`
+
+      - 只要在原生的 JavaScript 中可以轻松完成的操作，Vue 的渲染函数就不会提供专有的替代方法。
+
+      - 比如，在模板中使用的 `v-if` 和 `v-for`：
+
+        ```html
+        <ul v-if="items.length">
+          <li v-for="item in items">{{ item.name }}</li>
+        </ul>
+        <p v-else>No items found.</p>
+        ```
+
+      - 这些都可以在渲染函数中用 JavaScript 的 `if`/`else` 和 `map()` 来重写：
+
+        ```js
+        props: ['items'],
+        render() {
+          if (this.items.length) {
+            return h('ul', this.items.map((item) => {
+              return h('li', item.name)
+            }))
+          } else {
+            return h('p', 'No items found.')
+          }
+        }
+        ```
+
+    - `v-model`
+
+      - `v-model` 指令扩展为 `modelValue` 和 `onUpdate:modelValue` 在模板编译过程中，我们必须自己提供这些 prop：
+
+        ```js
+        props: ['modelValue'],
+        emits: ['update:modelValue'],
+        render() {
+          return h(SomeComponent, {
+            modelValue: this.modelValue,
+            'onUpdate:modelValue': value => this.$emit('update:modelValue', value)
+          })
+        }
+        ```
+
+    - `v-on`
+
+      - 我们必须为事件处理程序提供一个正确的 prop 名称，例如，要处理 `click` 事件，prop 名称应该是 `onClick`。
+
+        ```js
+        render() {
+          return h('div', {
+            onClick: $event => console.log('clicked', $event.target)
+          })
+        }
+        ```
+
+    - 事件修饰符
+
+      - 对于 `.passive` 、`.capture` 和 `.once` 事件修饰符，可以使用驼峰写法将他们拼接在事件名后面：
+
+        ```js
+        render() {
+          return h('input', {
+            onClickCapture: this.doThisInCapturingMode,
+            onKeyupOnce: this.doThisOnce,
+            onMouseoverOnceCapture: this.doThisOnceInCapturingMode
+          })
+        }
+        ```
+
+      - 对于所有其它的修饰符，私有前缀都不是必须的，因为你可以在事件处理函数中使用事件方法：
+
+      - | 修饰符                                      | 处理函数中的等价操作                                         |
+        | ------------------------------------------- | ------------------------------------------------------------ |
+        | `.stop`                                     | `event.stopPropagation()`                                    |
+        | `.prevent`                                  | `event.preventDefault()`                                     |
+        | `.self`                                     | `if (event.target !== event.currentTarget) return`           |
+        | 按键： `.enter`, `.13`                      | `if (event.keyCode !== 13) return` (对于别的按键修饰符来说，可将 13 改为另一个按键码 |
+        | 修饰键： `.ctrl`, `.alt`, `.shift`, `.meta` | `if (!event.ctrlKey) return` (将 `ctrlKey` 分别修改为 `altKey`, `shiftKey`, 或 `metaKey`) |
+
+      - 例子：
+
+        ```js
+        render() {
+          return h('input', {
+            onKeyUp: event => {
+              // 如果触发事件的元素不是事件绑定的元素
+              // 则返回
+              if (event.target !== event.currentTarget) return
+              // 如果向上键不是回车键，则终止
+              // 没有同时按下按键 (13) 和 shift 键
+              if (!event.shiftKey || event.keyCode !== 13) return
+              // 停止事件传播
+              event.stopPropagation()
+              // 阻止该元素默认的 keyup 事件
+              event.preventDefault()
+              // ...
+            }
+          })
+        }
+        ```
+
+    - 插槽
+
+      - 可以通过 `this.$slots` 访问静态插槽的内容，每个插槽都是一个 VNode 数组：
+
+        ```js
+        render() {
+          // `<div><slot></slot></div>`
+          return h('div', {}, this.$slots.default())
+        }
+        
+        //---------------------------------------------------------------------------
+        props: ['message'],
+        render() {
+          // `<div><slot :text="message"></slot></div>`
+          return h('div', {}, this.$slots.default({
+            text: this.message
+          }))
+        }
+        ```
+
+      - 要使用渲染函数将插槽传递给子组件，请执行以下操作：
+
+        ```js
+        const { h, resolveComponent } = Vue
+        
+        render() {
+          // `<div><child v-slot="props"><span>{{ props.text }}</span></child></div>`
+          return h('div', [
+            h(
+              resolveComponent('child'),
+              {},
+              // 将 `slots` 以 { name: props => VNode | Array<VNode> } 的形式传递给子对象。
+              {
+                default: (props) => h('span', props.text)
+              }
+            )
+          ])
+        }
+        ```
+
+        - 插槽以函数的形式传递，允许子组件控制每个插槽内容的创建。
+
+        - 任何响应式数据都应该在插槽函数内访问，以确保它被注册为子组件的依赖关系，而不是父组件。
+
+        - 对 `resolveComponent` 的调用应该在插槽函数之外进行，否则它们会相对于错误的组件进行解析。
+
+          ```js
+          // `<MyButton><MyIcon :name="icon" />{{ text }}</MyButton>`
+          render() {
+            // 应该是在插槽函数外面调用 resolveComponent。
+            const Button = resolveComponent('MyButton')
+            const Icon = resolveComponent('MyIcon')
+          
+            return h(
+              Button,
+              null,
+              {
+                // 使用箭头函数保存 `this` 的值
+                default: (props) => {
+                  // 响应式 property 应该在插槽函数内部读取，
+                  // 这样它们就会成为 children 渲染的依赖。
+                  return [
+                    h(Icon, { name: this.icon }),
+                    this.text
+                  ]
+                }
+              }
+            )
+          }
+          ```
+
+      - 如果一个组件从它的父组件中接收到插槽，它们可以直接传递给子组件。
+
+        ```js
+        render() {
+          return h(Panel, null, this.$slots)
+        }
+        //this/$slots是从父组件接收到的插槽
+        ```
+
+      
+
+    - `<component>`和`is`
+
+      - 在底层实现里，模板使用 `resolveDynamicComponent` 来实现 `is` attribute。如果我们在 `render` 函数中需要 `is` 提供的所有灵活性，我们可以使用同样的函数：
+
+        ```js
+        const { h, resolveDynamicComponent } = Vue
+        
+        // ...
+        
+        // `<component :is="name"></component>`
+        render() {
+          const Component = resolveDynamicComponent(this.name)
+          return h(Component)
+        }
+        ```
+
+        - 就像 `is`, `resolveDynamicComponent` 支持传递一个组件名称、一个 HTML 元素名称或一个组件选项对象。
+
+      - 如果我们只需要支持组件名称，那么可以使用 `resolveComponent` 来代替。
+
+        如果 VNode 始终是一个 HTML 元素，那么我们可以直接把它的名字传递给 `h`：
+
+        ```js
+        // `<component :is="bold ? 'strong' : 'em'"></component>`
+        render() {
+          return h(this.bold ? 'strong' : 'em')
+        }
+        ```
+
+        - 同样，如果传递给 `is` 的值是一个组件选项对象，那么不需要解析什么，可以直接作为 `h` 的第一个参数传递。
+        - 与 `<template>` 标签一样，`<component>` 标签**仅在模板中作为语法占位符**需要，当迁移到 `render` 函数时，**应被丢弃**。
+
+        
+
+    - 自定义指令
+
+      - 可以使用 `withDirectives`将自定义指令应用于 VNode：
+
+        ```js
+        const { h, resolveDirective, withDirectives } = Vue
+        
+        // ...
+        
+        // <div v-pin:top.animate="200"></div>
+        render () {
+          const pin = resolveDirective('pin')
+        
+          return withDirectives(h('div'), [
+            [pin, 200, 'top', { animate: true }]
+          ])
+        }
+        ```
+
+      - `resolveDirective `是模板内部用来解析指令名称的同一个函数。只有当你还没有直接访问指令的定义对象时，才需要这样做。
+
+    - 内置组件
+
+      - 诸如 `<keep-alive>`、`<transition>`、`<transition-group>` 和 `<teleport>` 等内置组件默认并没有被全局注册。
+
+      - 在模板中这些组件会被特殊处理，即在它们被用到的时候自动导入。当我们编写自己的 `render` 函数时，需要自行导入它们：
+
+        ```js
+        const { h, KeepAlive, Teleport, Transition, TransitionGroup } = Vue
+        // ...
+        render () {
+          return h(Transition, { mode: 'out-in' }, /* ... */)
+        }
+        ```
+
+        
+
+  - 渲染函数的返回值
+
+    - 返回一个字符串时会创建一个文本 VNode，而不被包裹任何元素：
+
+      ```js
+      render() {
+        return 'Hello world!'
+      }
+      ```
+
+    - 我们也可以返回一个子元素数组，而不把它们包裹在一个根结点里。这会创建一个片段 (fragment)：
+
+      ```js
+      // 相当于模板 `Hello<br>world!`
+      render() {
+        return [
+          'Hello',
+          h('br'),
+          'world!'
+        ]
+      }
+      ```
+
+      
+
+  - JSX
+
+    - 例子：
+
+      - 要编写这样的一个模板：
+
+        ```html
+        <anchored-heading :level="1"> <span>Hello</span> world! </anchored-heading>
+        ```
+
+    - 使用渲染函数：
+
+      ```js
+      h(
+        'anchored-heading',
+        {
+          level: 1
+        },
+        {
+          default: () => [h('span', 'Hello'), ' world!']
+        }
+      )
+      ```
+
+      - 可能会有点复杂
+
+    - 使用JSX语法：
+
+      ```js
+      import AnchoredHeading from './AnchoredHeading.vue'
+      
+      const app = createApp({
+        render() {
+          return (
+            <AnchoredHeading level={1}>
+              <span>Hello</span> world!
+            </AnchoredHeading>
+          )
+        }
+      })
+      
+      app.mount('#demo')
+      ```
+
+
+
+
+
+- 插件
+
+  - 插件是自包含的代码，通常向 Vue 添加全局级功能。它可以是公开 `install()` 方法的 `object`，也可以是 `function`
+
+    插件的功能范围没有严格的限制——一般有下面几种：
+
+    1. 添加全局方法或者 property。如：vue-custom-element
+    2. 添加全局资源：指令/过渡等。如：vue-touch
+    3. 通过全局 mixin 来添加一些组件选项。如vue-router
+    4. 添加全局实例方法，通过把它们添加到 `config.globalProperties` 上实现。
+    5. 一个库，提供自己的 API，同时提供上面提到的一个或多个功能。如 vue-router
+
+  - 我们将创建一个非常简化的插件版本，它显示 `i18n` 准备好的字符串。
+
+    - 每当这个插件被添加到应用程序中时，如果它是一个对象，就会调用 `install` 方法。
+    - 如果它是一个 `function`，则函数本身将被调用。
+    - 在这两种情况下——它都会收到两个参数：由 Vue 的 `createApp` 生成的 `app` 对象和用户传入的选项。
+
+  - 从设置插件对象开始。建议在单独的文件中创建它并将其导出，如下所示，以保持包含的逻辑和分离的逻辑。
+
+    ```js
+    // plugins/i18n.js
+    export default {
+      install: (app, options) => {
+        // Plugin code goes here
+      }
+    }
+    ```
+
+  - 我们想要一个函数来翻译整个应用程序可用的键，因此我们将使用 `app.config.globalProperties` 暴露它。
+
+    - 该函数将接收一个 `key` 字符串，我们将使用它在用户提供的选项中查找转换后的字符串。
+
+      ```js
+      // plugins/i18n.js
+      export default {
+        install: (app, options) => {
+          app.config.globalProperties.$translate = key => {
+            return key.split('.').reduce((o, i) => {
+              if (o) return o[i]
+            }, options)
+          }
+        }
+      }
+      ```
+
+    - 用户使用插件时，将在 `options` 参数中传递一个包含翻译后的键的对象。
+
+      ```js
+      //options如：
+      greetings: {
+        hello: 'Bonjour!'
+      }
+      ```
+
+  - 插件还允许我们使用 `inject` 为插件的用户提供功能或 attribute。
+
+    ```js
+    // plugins/i18n.js
+    export default {
+      install: (app, options) => {
+        app.config.globalProperties.$translate = key => {
+          return key.split('.').reduce((o, i) => {
+            if (o) return o[i]
+          }, options)
+        }
+    
+        app.provide('i18n', options)
+      }
+    }
+    ```
+
+  - -----------------------------------------上面是定义插件，下面是使用插件----------------------------------------------------------
+
+  - 在使用 `createApp()` 初始化 Vue 应用程序后，可以通过调用 `use()` 方法将插件添加到应用程序中。
+
+  - `use()` 方法有两个参数。第一个是要安装的插件。
+
+    它还会自动阻止你多次使用同一插件，因此**在同一插件上多次调用只会安装一次该插件**。
+
+    第二个参数是可选的，并且取决于每个特定的插件。在演示 `i18nPlugin` 的情况下，它是带有转换后的字符串的对象。
+
+  - 例子：
+
+    ```js
+    import { createApp } from 'vue'
+    import Root from './App.vue'
+    import i18nPlugin from './plugins/i18n'
+    
+    const app = createApp(Root)
+    const i18nStrings = {
+      greetings: {
+        hi: 'Hallo!'
+      }
+    }
+    
+    app.use(i18nPlugin, i18nStrings)
+    app.mount('#app')
+    ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### TypeScript支持
+
+- ts推荐配置
+
+  - ```js
+    // tsconfig.json
+    {
+      "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        // 这样就可以对 `this` 上的数据属性进行更严格的推断
+        "strict": true,
+        "jsx": "preserve",
+        "moduleResolution": "node"
+      }
+    }
+    ```
+
+  - 请注意，必须包含 `strict: true` (或至少包含 `noImplicitThis: true`，它是 `strict` 标志的一部分) 才能在组件方法中利用 `this` 的类型检查，否则它总是被视为 `any` 类型。
+
+- webpack配置
+
+  - 如果使用自定义 Webpack 配置，需要配置 `ts-loader` 来解析 vue 文件里的 `<script lang="ts">` 代码块：
+
+    ```js
+    // webpack.config.js
+    module.exports = {
+      ...
+      module: {
+        rules: [
+          {
+            test: /\.tsx?$/,
+            loader: 'ts-loader',
+            options: {
+              appendTsSuffixTo: [/\.vue$/],
+            },
+            exclude: /node_modules/,
+          },
+          {
+            test: /\.vue$/,
+            loader: 'vue-loader',
+          }
+          ...
+    ```
+
+    
+
+- 开发工具
+
+  - 项目创建——vuecli
+
+    - 开始：
+
+      ```bash
+      # 1. Install Vue CLI, 如果尚未安装
+      npm install --global @vue/cli@next
+      
+      # 2. 创建一个新项目, 选择 "Manually select features" 选项
+      vue create my-project-name
+      
+      # 3. 如果已经有一个不存在TypeScript的 Vue CLI项目，请添加适当的 Vue CLI插件：
+      vue add typescript
+      ```
+
+    - 请确保组件的 `script` 部分已将语言设置为 TypeScript：
+
+      ```html
+      <script lang="ts">
+        ...
+      </script>
+      ```
+
+    - 或者，如果你想将 TypeScript 与 [JSX `render` 函数](https://v3.cn.vuejs.org/guide/render-function.html#jsx)结合起来：
+
+      ```html
+      <script lang="tsx">
+        ...
+      </script>
+      ```
+
+    
+
+- 定义Vue组件
+
+  - 要让 TypeScript 正确推断 Vue 组件选项中的类型，需要使用 `defineComponent` 全局方法定义组件：
+
+    ```ts
+    import { defineComponent } from 'vue'
+    
+    const Component = defineComponent({
+      // 已启用类型推断
+    })
+    ```
+
+  - 如果使用的是单文件组件，则通常会被写成：
+
+    ```vue
+    <script lang="ts">
+    import { defineComponent } from 'vue'
+    export default defineComponent({
+      // 已启用类型推断
+    })
+    </script>
+    ```
+
+    
+
+- 与Options API（选项式API）一起使用
+
+  - TypeScript 应该能够在不显式定义类型的情况下推断大多数类型。例如，对于拥有一个数字类型的 `count` property 的组件来说，如果你试图对其调用字符串独有的方法，会出现错误：
+
+    ```js
+    const Component = defineComponent({
+      data() {
+        return {
+          count: 0
+        }
+      },
+      mounted() {
+        const result = this.count.split('') // => Property 'split' does not exist on type 'number'
+      }
+    })
+    ```
+
+  - 如果你有一个复杂的类型或接口，你可以使用 类型断言（type assertion ）对其进行指明：
+
+    ```js
+    interface Book {
+      title: string
+      author: string
+      year: number
+    }
+    
+    const Component = defineComponent({
+      data() {
+        return {
+          book: {
+            title: 'Vue 3 Guide',
+            author: 'Vue Team',
+            year: 2020
+          } as Book
+        }
+      }
+    })
+    ```
+
+  - 为globalProperties扩充类型
+
+    - Vue 3 提供了一个 `globalProperties` 对象，用来添加可以被任意组件实例访问的全局 property。
+
+    - 例如一个插件想要注入一个共享全局对象或函数。
+
+      ```js
+      // 用户定义
+      import axios from 'axios'
+      const app = Vue.createApp({})
+      app.config.globalProperties.$http = axios
+      // 验证数据的插件
+      export default {
+        install(app, options) {
+          app.config.globalProperties.$validate = (data: object, rule: object) => {
+            // 检查对象是否合规
+          }
+        }
+      }
+      ```
+
+    - 为了告诉 TypeScript 这些新 property，我们可以使用模块扩充 (module augmentation)。
+
+      在上述示例中，我们可以添加以下类型声明：
+
+      ```ts
+      import axios from 'axios'
+      declare module '@vue/runtime-core' {
+        export interface ComponentCustomProperties {
+          $http: typeof axios
+          $validate: (data: object, rule: object) => boolean
+        }
+      }
+      ```
+
+      我们可以把这些类型声明放在同一个文件里，或一个项目级别的 `*.d.ts` 文件 (例如在 TypeScript 会自动加载的 `src/typings` 文件夹中)。对于库/插件作者来说，这个文件应该被定义在 `package.json` 的 `types` property 里。
+
+    - 注意：
+
+      - 确认声明文件是一个 TypeScript 模块
+      - 为了利用好模块扩充，你需要确认文件中至少有一个顶级的 `import` 或 `export`，哪怕只是一个 `export {}`。
+      - 在 TypeScript 中，任何包含一个顶级 `import` 或 `export` 的文件都被视为一个“模块”。如果类型声明在模块之外，该声明会覆盖而不是扩充原本的类型。
+
+  - 注解返回类型
+
+    - 由于 Vue 声明文件的循环特性，**TypeScript 可能难以推断 computed 的类型**。因此，你可能**需要注解计算属性的返回类型**。
+
+    - ```js
+      import { defineComponent } from 'vue'
+      
+      const Component = defineComponent({
+        data() {
+          return {
+            message: 'Hello!'
+          }
+        },
+        computed: {
+          // 需要注解
+          greeting(): string {
+            return this.message + '!'
+          },
+      
+          // 在使用 setter 进行计算时，需要对 getter 进行注解
+          greetingUppercased: {
+            get(): string {
+              return this.greeting.toUpperCase()
+            },
+            set(newValue: string) {
+              this.message = newValue.toUpperCase()
+            }
+          }
+        }
+      })
+      ```
+
+  - 注解props
+
+    - Vue 对定义了 `type` 的 prop 执行运行时验证。要将这些类型提供给 TypeScript，我们需要使用 `PropType` 指明构造函数：
+
+      ```js
+      import { defineComponent, PropType } from 'vue'
+      
+      interface Book {
+        title: string
+        author: string
+        year: number
+      }
+      
+      const Component = defineComponent({
+        props: {
+          name: String,
+          id: [Number, String],
+          success: { type: String },
+          callback: {
+            type: Function as PropType<() => void>
+          },
+          book: {
+            type: Object as PropType<Book>,
+            required: true
+          },
+          metadata: {
+            type: null // metadata 的类型是 any
+          }
+        }
+      })
+      ```
+
+    - 注意：
+
+      - 由于 TypeScript 中的设计限制，当它涉及到为了对函数表达式进行类型推理，你必须注意对象和数组的 `validator` 和 `default` 值：
+
+        ```js
+        import { defineComponent, PropType } from 'vue'
+        
+        interface Book {
+          title: string
+          year?: number
+        }
+        
+        const Component = defineComponent({
+          props: {
+            bookA: {
+              type: Object as PropType<Book>,
+              // 请务必使用箭头函数
+              default: () => ({
+                title: 'Arrow Function Expression'
+              }),
+              validator: (book: Book) => !!book.title
+            },
+            bookB: {
+              type: Object as PropType<Book>,
+              // 或者提供一个明确的 this 参数
+              default(this: void) {
+                return {
+                  title: 'Function Expression'
+                }
+              },
+              validator(this: void, book: Book) {
+                return !!book.title
+              }
+            }
+          }
+        })
+        ```
+
+  - 注解emit
+
+    - 我们可以为触发的事件注解一个有效载荷。另外，所有未声明的触发事件在调用时都会抛出一个类型错误。
+
+    - ```js
+      const Component = defineComponent({
+        emits: {
+          addBook(payload: { bookName: string }) {
+            // perform runtime 验证
+            return payload.bookName.length > 0
+          }
+        },
+        methods: {
+          onSubmit() {
+            this.$emit('addBook', {
+              bookName: 123 // 类型错误！
+            })
+            this.$emit('non-declared-event') // 类型错误！
+          }
+        }
+      })
+      ```
+
+
+
+
+
+- 与组合式API一起使用
+
+  - 在 `setup()` 函数中，不需要将类型传递给 `props` 参数，因为它将从 `props` 组件选项推断类型。
+
+    ```typescript
+    import { defineComponent } from 'vue'
+    
+    const Component = defineComponent({
+      props: {
+        message: {
+          type: String,
+          required: true
+        }
+      },
+    
+      setup(props) {
+        const result = props.message.split('') // 正确, 'message' 被声明为字符串
+        const filtered = props.message.filter(p => p.value) // 将引发错误: Property 'filter' does not exist on type 'string'
+      }
+    })
+    ```
+
+  - 类型声明refs
+
+    - Refs 根据初始值推断类型：
+
+      ```typescript
+      import { defineComponent, ref } from 'vue'
+      
+      const Component = defineComponent({
+        setup() {
+          const year = ref(2020)
+      
+          const result = year.value.split('') // => Property 'split' does not exist on type 'number'
+        }
+      })
+      ```
+
+    - 有时我们可能需要为 ref 的内部值指定复杂类型。我们可以在调用 ref 重写默认推理时简单地传递一个泛型参数：
+
+      ```typescript
+      const year = ref<string | number>('2020') // year's type: Ref<string | number>
+      
+      year.value = 2020 // ok!
+      ```
+
+    - 注意：**如果泛型的类型未知，建议将 `ref` 转换为 `Ref<T>`**
+
+  - 为模板引用定义类型
+
+    - 有时可能需要为一个子组件标注一个模板引用，以调用其公共方法。
+
+    - 例子：
+
+      ```typescript
+      //这是子组件
+      import { defineComponent, ref } from 'vue'
+      const MyModal = defineComponent({
+        setup() {
+          const isContentShown = ref(false)
+          const open = () => (isContentShown.value = true)
+          return {
+            isContentShown,
+            open
+          }
+        }
+      })
+      ```
+
+      ```typescript
+      //这是父组件
+      import { defineComponent, ref } from 'vue'
+      const app = defineComponent({
+        components: {
+          MyModal
+        },
+        template: `
+          <button @click="openModal">Open from parent</button>
+          <my-modal ref="modal" />
+        `,
+        setup() {
+          const modal = ref()
+          const openModal = () => {
+            modal.value.open()
+          }
+          return { modal, openModal }
+        }
+      })
+      ```
+
+      - 它可以工作，但是没有关于 `MyModal` 及其可用方法的类型信息。为了解决这个问题，你应该在创建引用时使用 `InstanceType`：
+
+        ```typescript
+        setup() {
+          const modal = ref<InstanceType<typeof MyModal>>()
+          const openModal = () => {
+            modal.value?.open()
+          }
+          return { modal, openModal }
+        }
+        ```
+
+        
+
+  - 类型声明reactive
+
+    - 当声明类型 `reactive` property，我们可以使用接口：
+
+      ```typescript
+      import { defineComponent, reactive } from 'vue'
+      
+      interface Book {
+        title: string
+        year?: number
+      }
+      
+      export default defineComponent({
+        name: 'HelloWorld',
+        setup() {
+          const book = reactive<Book>({ title: 'Vue 3 Guide' })
+          // or
+          const book: Book = reactive({ title: 'Vue 3 Guide' })
+          // or
+          const book = reactive({ title: 'Vue 3 Guide' }) as Book
+        }
+      })
+      ```
+
+      
+
+  - 类型声明computed
+
+    - 计算值将根据返回值自动推断类型
+
+    - ```typescript
+      import { defineComponent, ref, computed } from 'vue'
+      
+      export default defineComponent({
+        name: 'CounterButton',
+        setup() {
+          let count = ref(0)
+      
+          // 只读
+          const doubleCount = computed(() => count.value * 2)
+      
+          const result = doubleCount.value.split('') // => Property 'split' does not exist on type 'number'
+        }
+      })
+      ```
+
+      
+
+  - 为事件处理器添加类型
+
+    - 在处理原生 DOM 事件的时候，正确地为处理函数的参数添加类型或许会是有用的。让我们看这个例子：
+
+      ```vue
+      <template>
+        <input type="text" @change="handleChange" />
+      </template>
+      <script lang="ts">
+      import { defineComponent } from 'vue'
+      export default defineComponent({
+        setup() {
+          // `evt` 将会是 `any` 类型
+          const handleChange = evt => {
+            console.log(evt.target.value) // 此处 TS 将抛出异常
+          }
+          return { handleChange }
+        }
+      })
+      </script>
+      ```
+
+      - 如上例子，在没有为 `evt` 参数正确地声明类型的情况下，当我们尝试获取 `<input>` 元素的值时，TypeScript 将抛出异常。
+
+    - 解决方案是将事件的目标转换为正确的类型：
+
+      ```ts
+      const handleChange = (evt: Event) => {
+        console.log((evt.target as HTMLInputElement).value)
+      }
+      ```
+
+      
 
 - 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -30,7 +30,7 @@
   - 请求拦截器：
 
     ```js
-    axios.interceptors.request.use((config) => {
+         axios.interceptors.request.use((config) => {
                 console.log('进入请求拦截器');
                 console.log(config);
                 return config           //需要return才能放行

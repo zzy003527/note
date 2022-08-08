@@ -42,13 +42,25 @@
 
     - 下载完毕之后，就可以得到一个地址：宝塔的管理面板
 
-      我得到的是
+      我腾讯云得到的是
 
       ```ini
       外网面板地址: http://114.132.164.235:8888/8ce86d5a
       内网面板地址: http://10.0.12.14:8888/8ce86d5a
       username: ybtp0oqx
       password: 343426c6
+      If you cannot access the panel,
+      release the following panel port [8888] in the security group
+      若无法访问面板，请检查防火墙/安全组是否有放行面板[8888]端口
+      ```
+
+      阿里云得到的是
+
+      ```ini
+      外网面板地址: http://120.77.201.11:8888/23f891dd
+      内网面板地址: http://172.20.107.142:8888/23f891dd
+      username: nsksp3xz
+      password: 3c70c766
       If you cannot access the panel,
       release the following panel port [8888] in the security group
       若无法访问面板，请检查防火墙/安全组是否有放行面板[8888]端口
@@ -162,7 +174,9 @@
         - 然后点击应用
     - 配置git账户及ssh用户信息
       - 点击`Manage Jenkins`，点击`Configure System`
-      - 
+      - 找到Publish Over SSH
+      - 在**Passphrase**处填上**服务器密码**
+      - 下方点击新增，在SSH Servers中的**Name和Hostname处填上服务器公网ip**
       - 
       - 
       - 

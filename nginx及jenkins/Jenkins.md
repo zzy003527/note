@@ -165,6 +165,7 @@
   - 安装并配置插件
 
     - 点击`Manage Jenkins`，点击`System Configuration中的Manage Plugins`,选择可选插件，选择`nodejs和Publish Over SSH`安装（左下角`Install without restart`）
+
     - 点击`Manage Jenkins`,找到`Global Tool Configuration`
       - 配置git：将Git框下的`Path to Git executable`中改为`/usr/bin/git`
       - 配置node：
@@ -172,192 +173,112 @@
         - 在别名中填入`Node_v13.6`
         - 将下方选框中的版本选为`NodeJS 13.6.0`
         - 然后点击应用
+      
     - 配置git账户及ssh用户信息
       - 点击`Manage Jenkins`，点击`Configure System`
       - 找到Publish Over SSH
       - 在**Passphrase**处填上**服务器密码**
       - 下方点击新增，在SSH Servers中的**Name和Hostname处填上服务器公网ip**
-      - 
-      - 
-      - 
-      - d
-    - 
-    - 
-    - 
-    - 
-    - d
+      - Username填上登录账户（root）
+      - Remote Directory填上/
+      - 然后点击右下角的**Test Configuration**测试，显示**Success**就说明配置正确
+      
+    - 配置Github Api插件
+
+      - 到`github`生成`Personal access token`
+
+        - 点击右上角 **头像** - **Settings**，找到 **Developer settings**，然后选中 **Personal access tokens**，点击右上角 **Generate new token**
+
+        - 下方勾选repo和admin：repo_hook
+
+        - 点击 **Generate token** 之后就会生成一段 **token**
+
+        - 注：此token只会显示一次
+
+          ```js
+          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
+          ```
+
+      - 配置Jenkins中的GitHub配置
+
+        - 既然是要实现代码 `push` 到仓库就自动构建并发布，那么我们肯定得用到 `Webhook`，不过我们不需要手动创建 `Webhook`，插件会帮我们自动创建
+
+          - 在系统配置中，找到 `GitHub` 配置的部分，点击 **添加 `GitHub` 服务器**，点击 **凭据** 下方的 **添加** 按钮，选择 **`Jenkins`**
+
+          - 点击后会弹出一个添加凭据的窗口，**类型** 选择为 **Secret text**，将我们刚才生成的 **Personal access token** 复制到 **Secret** 一栏中，点击添加
+
+          - 添加后我们在 **凭据** 一栏选中 **Secret text**，勾选 **管理 Hook**，点击 **连接测试**，如果正确显示了你的 `GitHub` 用户名，就说明配置成功了
+
+          
 
   - 创建项目
 
-    - 点击新建任务，填写任务名称，然后选择第一个（构建一个自由风格的软件项目），确定
-    - 点击源码管理，选择Git
+    - ##### 配置Github项目
+
+      - 点击新建任务，填写任务名称，然后选择第一个（构建一个自由风格的软件项目），确定
+
+      - 勾选 **`GitHub` 项目**，输入 **项目 `URL`**（就是项目的浏览器地址）。将下面的 **源码管理** 选中为 **`Git`**，将你要构建部署的项目的 **`clone`** 地址填到 **Repository URL** 一栏中（就是项目的浏览器地址加上 `.git` 后缀名）
+
+      - **注意：**如果是公开的仓库，`Credentials `一栏可以选择无；如果是私有的仓库，需要先添加一个可以访问该仓库的 `GitHub` 账号，方法类似配置 `GitHub API` 插件，只不过类型一栏选择 用户名密码，然后在下方输入 用户名 密码
+
+    - ##### 配置触发构建器
+
+      - 勾选 **构建触发器** 一栏中的 **GitHub hook trigger for GITScm polling**，勾选 **构建环境** 一栏中的 **Use secret text(s) or file(s)**，在 **凭据** 一栏中选中我们之前添加的 **Secret text**，勾选 **Provide Node & npm bin/ folder to PATH** 为构建项目提供 `Node.js` 环境
+
+    - ##### 增加构建步骤
+
+      - 到 **构建** 一栏中，**增加构建步骤**，选择 **执行 `shell`**，在命令中输入
+
+        ```js
+        node -v
+        npm -v
+        
+        rm -rf node_modules
+        npm install
+        npm run test
+        npm run build
+        ```
+
+      - 注意：命令中有一条 `npm run test` 命令可以不加，如果是编写好了测试用例的项目，就需要加上，测试代码功能是否正常
+
+      - 如果部署的是原生项目，则不需要加上这些命令，因为原生没有`package.json`文件，无法使用`npm install`去构建依赖
+
+    - ##### 增加构建后的步骤
+
+      - 点击 **增加构建后操作步骤**，选择 **Send build artifacts over SSH**，使用 **SSH** 的方式将代码上传至服务器
+      - 在Source files上填写自己想要的目录名（如：todolist/**）
+      - 在Remove prefix上填写上面目录名（如：todolist）
+      - 在Remote directory填上自己想要储存的目标仓库（如：/www/wwwroot/todolist_project)
+      - 在Exec commend填上`service nginx restart`
+      - 点击高级，勾上`Clean remote`
+
+    - 注意：
+
+      1. ```js
+         Error fetching remote repo 'origin'
+         ```
+
+         产生这种报错就尝试清空一下工作空间
+
+      2. ```js
+         fatal: The remote end hung up unexpectedly
+         ```
+
+         产生这种报错就尝试增加超时时间
+
+         - 在配置的源码管理里，新增高级克隆行为，克隆和拉取时间修改为60分钟
+
+         - 在配置的构建环境中，勾选`Abort the build if it's stuck`，并把超时时间修改为30分钟
+
+      3. ```js
+         ERROR: Couldn't find any revision to build. Verify the repository and branch configuration for this job.
+         SSH: Current build result is [FAILURE], not going to run.
+         ```
+
+         产生这种错误，就去查看自己的github项目在哪个分支上（我的是在main），然后去**项目配置的源码管理的Git的Branch Specifier**上填上自己的分支
+
     - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - d
 
   - 
 
-  - 
-
-  - 
-
-  - 
-
-  - 
-
-  - 
-
-  - 
-
-  - 
-
-  - 
-
-  - 
-
-  - 
-
-  - d
-
 - 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- 
-
-- d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

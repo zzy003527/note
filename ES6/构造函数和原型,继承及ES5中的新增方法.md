@@ -67,7 +67,7 @@
   - 取值函数（getter）和存值函数（setter）
 
     - ```js
-    class MyClass {
+      class MyClass {
         constructor() {
         // ...
         }
@@ -87,9 +87,10 @@
       inst.prop
       // 'getter'
       
+
     // 上面代码中，prop属性有对应的存值函数和取值函数，因此赋值和读取行为都被自定义了。
       ```
-
+    
     
 
   - 构造函数原型（原型对象）    prototype

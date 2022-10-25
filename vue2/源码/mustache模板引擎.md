@@ -4,6 +4,8 @@
 
   - 模板引擎是将数据要变为视图最优雅的解决方案
 
+  - 模板引擎是为了使用户界面与业务数据（内容）分离而产生的，它可以生成特定格式的文档，用于网站的模板引擎就会生成一个标准的HTML文档在原有的HTML页面中来填充数据。最终达到渲染页面的目的。说白了就是**将数据变成视图的方法**。
+
   - 比如：
 
     - 数据：
@@ -77,17 +79,6 @@
         
                 var list = document.getElementById('list')
         
-                var str = [
-                '<li>',
-                '    <div class="hd"></div>',
-                '    <div class="bd">',
-                '        <p>姓名:</p>',
-                '        <p>年龄:</p>',
-                '        <p>性别:</p>',
-                '    </div>',
-                '</li>',
-            ].join('')
-        
         
             for(var i = 0;i < arr.length;i++) {
                     list.innerHTML += [
@@ -104,9 +95,9 @@
             </script>
         </body>
         ```
-
+      
     - ES6的反引号法
-
+    
       - ```html
         <body>
             <ul id="list"></ul>
@@ -119,19 +110,7 @@
                 ]
         
                 var list = document.getElementById('list')
-        
-                var str = [
-                '<li>',
-                '    <div class="hd"></div>',
-                '    <div class="bd">',
-                '        <p>姓名:</p>',
-                '        <p>年龄:</p>',
-                '        <p>性别:</p>',
-                '    </div>',
-                '</li>',
-            ].join('')
-        
-        
+          
             for(var i = 0;i < arr.length;i++) {
                     list.innerHTML += `
                     <li>
@@ -147,9 +126,9 @@
             </script>
         </body>
         ```
-
+      
     - 模板引擎
-
+    
     
 
 - ### mustache库
@@ -298,11 +277,17 @@
               var data = {
                   m: true
               }
+              
+              //当m为true时才渲染
       ```
-
+      
       
 
 - #### mustache的底层核心机理
+
+  - ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d0b293198fc24bff9684bfec91527504~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
+
+    ![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a640d8adbd4c4339bfb4fa48ac7776cf~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?)
 
   - 什么是tokens
 
@@ -369,6 +354,16 @@
 
   - 首先需要有一个Scanner类
 
+    - scanner是扫描的意思，遍历模板字符串。
+
+    - 思路：
+
+      - 将遇到'{{'前的字符串单独截取，保存。
+      - 利用scan方法，跳过'{{'的长度。
+      - 将'{{'之后，'}}'之前的字符串截取，保存。
+      - 利用scan方法，跳过'}}'的长度。
+         Scanner中scan方法主要是跳过tag的长度，并且更新tail字符串。scanUntil方法是扫描字符串，返回遇到stopTag前扫描出的字符串。eos表示指针位置是否已经到最后，返回布尔值
+
     - ```js
       //Scanner.js
       // Scanner扫描器类
@@ -432,6 +427,8 @@
               words = scanner.scanUtil('{{')
               if (words != '') {
                   // 尝试一下去掉空格,智能判断是普通文字的空格，还是标签中的空格
+                  //如<div class="aaa">哈哈  嘻嘻<div>         文字中空格去掉，但是标签的空格不能去
+                  
                   // 空格是不是在标签内
                   let isIn = false;
                   // 空白字符串
@@ -562,6 +559,7 @@
       ```js
       //lookup.js
       // 功能是可以在dataObj对象中，寻找用连续点符号的KeyName属性
+      // keyName有可能是person.xiaoming.name, 需要判断keyName中是否包含'.'，遍历分割的keyName返回temp值。如果keyName中不包含'.'，判断dataObj是不是对象，是对象返回keyName对应的value。否则将dataObj直接返回
       
       export default function lookup(dataObj, KeyName) {
           // 看看KeyName中有没有点符号，但不能是.本身

@@ -58,9 +58,7 @@
   export default Vue
   ```
 
-- 
-
-- d
+  
 
 
 
@@ -173,14 +171,14 @@
     		Vue.component('comp',{
                 template: '<div>I am comp</div>'
             })
-    
+      
             new Vue({
                 el: '#app',
                 data: {
                     msg: 'hello vue'
                 }
             })
-    
+      
     // 像这样子的组件，其实就会被合并成下面这样子
     		new Vue({
                 el: '#app',

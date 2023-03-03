@@ -356,7 +356,7 @@
 
       - ```js
         //全局生效的中间件
-        app.use(function(req.res,next) {
+        app.use(function(req,res,next) {
             console.log('这是一个最简单的中间件函数')
             next()
         })
@@ -396,7 +396,7 @@
         }
         //mw1这个中间件只在“当前路由中生效”，这种用法属于“局部生效的中间件”
         app.get('/',mw1,function(req,res) {
-        res.send('Home page.')
+            res.send('Home page.')
         })
         //mw1这个中间件不会影响下面这个路由
         app.get('/user',function(req,res) {

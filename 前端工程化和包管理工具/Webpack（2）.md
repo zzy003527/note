@@ -181,7 +181,7 @@ npx webpack ./src/main.js --mode=production
     // 输出
     output: {},
     // 加载器
-    module: {
+    loader: {
       rules: [],
     },
     // 插件

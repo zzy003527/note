@@ -1248,7 +1248,7 @@
       - 相当于：
   
         ```typescript
-        type Person Detail = { name: string; phone: string }
+        type PersonDetail = { name: string; phone: string }
         ```
   
     - 交叉类型（&）和接口继承（extends）的对比：
@@ -1542,7 +1542,7 @@
           }
           type ReadonlyProps = Readonly<Props>
           
-          let props: Readonly Props = { id: '1', children: [] }
+          let props: ReadonlyProps = { id: '1', children: [] }
           props.id = '2'        //报错，因为此时的props只读
           ```
   
